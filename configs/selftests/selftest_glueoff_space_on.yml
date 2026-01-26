@@ -1,0 +1,67 @@
+schema_version: vi_spacetime_config_v0.1
+experiment_id: selftest_glueoff_space_on
+description: 'Selftest: selftest_glueoff_space_on'
+variant: full
+engine:
+  mode: v_glue
+  notes: Selftest run
+sizes:
+- 4
+seeds:
+- 13
+scan:
+  n_values:
+  - 0.0
+steps_total: 600
+burn_in_epochs: 100
+measure_epochs: 500
+W_coh: 50
+active_window:
+  mode: recency
+  hops: 50
+glue:
+  mapping_mode: linear
+  profile: composite_all
+  axes:
+    shared_bias:
+      min: 0.0
+      max: 0.0
+    phase_lock:
+      min: 0.0
+      max: 0.0
+    domains:
+      min: 0.0
+      max: 0.0
+    cadence_disorder:
+      min: 1.0
+      max: 1.0
+crosslinks:
+  allow_junctions: true
+  new_event_policy: unique_per_thread
+observables:
+  beta_junc: 1.5
+  tick_definition: v_clock_from_V
+  compute_clustering: false
+  compute_hub_metrics: false
+snapshots:
+  enabled: false
+output:
+  out_dir: outputs/selftest/selftest_glueoff_space_on
+  write_timeseries: false
+  timeseries_bins: 50
+anomaly_thresholds:
+  hubshare_star: 0.9
+  max_indegree_factor: 3.0
+  degenerate_S_tol: 1.0e-06
+space:
+  enabled: true
+  p_reuse_mode: fixed
+  p_reuse: 0.5
+  domain_match: true
+  allow_cocreate_merge: false
+  beta_junc: 1.5
+  w_star: 0.3
+  log_island_timeseries: false
+ablation:
+  glue_decohere: true
+  q_base_override: 0.45

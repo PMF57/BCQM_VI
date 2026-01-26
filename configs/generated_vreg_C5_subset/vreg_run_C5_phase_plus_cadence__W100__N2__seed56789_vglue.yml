@@ -1,0 +1,112 @@
+schema_version: vi_spacetime_config_v0.1
+experiment_id: vreg_run_C5_phase_plus_cadence_vglue
+description: Imported from BCQM V (C5 phase+cadence) using v_glue engine (W=100, N=2,
+  seed=56789)
+variant: full
+sizes:
+- 2
+seeds:
+- 56789
+scan:
+  n_values:
+  - 0.0
+steps_total: 5000
+burn_in_epochs: 500
+measure_epochs: 4500
+W_coh: 100
+active_window:
+  mode: recency
+  hops: 100
+glue:
+  mapping_mode: linear
+  profile: composite_all
+  axes:
+    shared_bias:
+      min: 0.0
+      max: 0.0
+    phase_lock:
+      min: 0.0
+      max: 0.0
+    domains:
+      min: 0.0
+      max: 0.0
+    cadence_disorder:
+      min: 1.0
+      max: 1.0
+crosslinks:
+  allow_junctions: true
+  new_event_policy: unique_per_thread
+observables:
+  beta_junc: 1.5
+  tick_definition: v_clock_from_V
+  compute_clustering: true
+  compute_hub_metrics: true
+snapshots:
+  enabled: false
+output:
+  out_dir: outputs_glue_axes/run_C5_phase_plus_cadence_vglue/W100/N2/seed56789
+  write_timeseries: false
+  timeseries_bins: 50
+anomaly_thresholds:
+  hubshare_star: 0.9
+  max_indegree_factor: 3.0
+  degenerate_S_tol: 1.0e-06
+provenance:
+  source: BCQM V config
+  v_config:
+    output_dir: outputs_glue_axes/run_C5_phase_plus_cadence
+    random_seed: 56789
+    grid:
+      W_coh_values:
+      - 20
+      - 50
+      - 100
+      N_values:
+      - 1
+      - 2
+      - 4
+      - 8
+      ensembles: 32
+      steps: 5000
+      burn_in: 500
+    hop_coherence:
+      form: power_law
+      alpha: 1.0
+      k_prefactor: 2.0
+      memory_depth: 1
+    shared_bias:
+      enabled: false
+      lambda_bias: 0.0
+      bias_vector:
+      - 1.0
+      - 0.0
+    phase_lock:
+      enabled: true
+      lambda_phase: 0.25
+      omega_0: 0.1
+    domains:
+      enabled: false
+      n_initial_domains: 1
+      lambda_domain: 0.0
+      merge_threshold: 0.8
+      split_threshold: 0.3
+      min_domain_size: 1
+    cadence:
+      enabled: true
+      distribution: lognormal
+      mean_T: 1.0
+      sigma_T: 0.2
+      lambda_cadence: 0.15
+    diagnostics:
+      store_states: true
+      compute_lockstep: true
+      compute_psd: false
+  v_grid_point:
+    W_coh: 100
+    N: 2
+    seed: 56789
+  notes: Translation-only import; semantics preserved. Glue parameters are carried
+    in v_config for later direct port.
+engine:
+  mode: v_glue
+  notes: Use BCQM V direct-ancestor glue kernels + metrics (state_v_ancestor/kernels_v_ancestor/metrics_v_ancestor).

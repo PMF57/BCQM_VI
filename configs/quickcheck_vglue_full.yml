@@ -1,0 +1,64 @@
+schema_version: vi_spacetime_config_v0.1
+experiment_id: quickcheck_vglue_full_v0_1
+description: 'Quickcheck (V-glue engine): N=32, n in {0,0.5,1}, 1 seed, short run;
+  nosnaps'
+variant: full
+sizes:
+- 32
+seeds:
+- 1
+scan:
+  n_values:
+  - 0.0
+  - 0.5
+  - 1.0
+steps_total: 5000
+burn_in_epochs: 1000
+measure_epochs: 4000
+W_coh: 256
+active_window:
+  mode: recency
+  hops: 256
+glue:
+  mapping_mode: linear
+  profile: composite_all
+  axes:
+    shared_bias:
+      min: 0.0
+      max: 1.0
+    phase_lock:
+      min: 0.0
+      max: 1.0
+    domains:
+      min: 0.0
+      max: 1.0
+    cadence_disorder:
+      min: 1.0
+      max: 0.0
+crosslinks:
+  allow_junctions: true
+  new_event_policy: unique_per_thread
+observables:
+  beta_junc: 1.5
+  tick_definition: v_clock_from_V
+  compute_clustering: true
+  compute_hub_metrics: true
+snapshots:
+  enabled: false
+  cadence:
+    every: 2500
+    start: 2500
+  write_edges_csv: true
+  write_nodes_json: true
+output:
+  out_dir: outputs/quickcheck_vglue_full_v0_1
+  write_timeseries: false
+  timeseries_bins: 100
+anomaly_thresholds:
+  hubshare_star: 0.9
+  max_indegree_factor: 3.0
+  degenerate_S_tol: 1.0e-06
+engine:
+  mode: v_glue
+  notes: Use ported BCQM V state+glue+metrics pathway (direct ancestor). Cross-links
+    are not the regression target in this run.

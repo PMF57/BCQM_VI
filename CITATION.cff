@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "BCQM VI — Spacetime (Path A) reference implementation"
+authors:
+  - family-names: Ferguson
+    given-names: Peter M.
+    affiliation: Independent Researcher
+version: "0.1.0"
+date-released: "2026-01-26"
+license: MIT

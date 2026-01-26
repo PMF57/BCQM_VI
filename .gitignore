@@ -1,2 +1,17 @@
-.zig-cache/
-zig-out/
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.venv/
+venv/
+.env
+
+# macOS
+.DS_Store
+
+# Generated outputs (keep local/cloud; not in repo)
+outputs/
+outputs_glue_axes/
+
+# Archives
+*.zip

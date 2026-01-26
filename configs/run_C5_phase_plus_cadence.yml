@@ -1,0 +1,46 @@
+
+output_dir: "outputs_glue_axes/run_C5_phase_plus_cadence"
+random_seed: 56789
+
+grid:
+  W_coh_values: [20, 50, 100]
+  N_values: [1, 2, 4, 8]
+  ensembles: 32
+  steps: 5000
+  burn_in: 500
+
+hop_coherence:
+  form: "power_law"
+  alpha: 1.0
+  k_prefactor: 2.0
+  memory_depth: 1
+
+shared_bias:
+  enabled: false
+  lambda_bias: 0.0
+  bias_vector: [1.0, 0.0]
+
+phase_lock:
+  enabled: true
+  lambda_phase: 0.25
+  omega_0: 0.1
+
+domains:
+  enabled: false
+  n_initial_domains: 1
+  lambda_domain: 0.0
+  merge_threshold: 0.8
+  split_threshold: 0.3
+  min_domain_size: 1
+
+cadence:
+  enabled: true
+  distribution: "lognormal"
+  mean_T: 1.0
+  sigma_T: 0.2
+  lambda_cadence: 0.15
+
+diagnostics:
+  store_states: true
+  compute_lockstep: true
+  compute_psd: false
