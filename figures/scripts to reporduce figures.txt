@@ -3,7 +3,3 @@ python3 bcqm_vi_spacetime/analysis/timeseries_ensemble_summary.py
 python3 bcqm_vi_spacetime/analysis/timeseries_ensemble_summary_N4.py
 python3 bcqm_vi_spacetime/analysis/ball_growth_ensemble_summary.py
 
-NOTE:
- timeseries_pilot_W100_N8_nOp8_seed56796_spaceon.csv
-
-  Needs to be one level up - in the package root
