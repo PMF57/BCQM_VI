@@ -1,0 +1,191 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\input{bcqm_macros_v6}
+
+
+\title{BCQM VI Lab Note: Glue-Dynamics Specification\\Porting the BCQM V Lockstep Mechanisms into \texttt{bcqm\_\allowbreak vi\_\allowbreak spacetime} (v0.5)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{20 January 2026}
+
+\begin{document}
+\emergencystretch=2em
+\maketitle
+
+\section*{Purpose}
+BCQM V identifies four \emph{glue mechanisms sustaining lockstep} (shared history; interference/propensity; domains; hop coherence) and reports a ``sweet spot'' regime in bundle size where stiffness and clock quality are jointly optimised. The present \texttt{bcqm\_\allowbreak vi\_\allowbreak spacetime} scaffold currently uses glue axes only through a coarse synchrony scalar and heuristic selection rules. This note specifies a minimally-assumptive \emph{glue-dynamics layer} for BCQM VI: implement glue axes as \emph{state dynamics} (as in IV/V), so that clock/lockstep behaviour and cross-link structure arise from those dynamics rather than from hand-shaped probability curves.
+
+\section*{Architectural stance: two layers}
+It is useful to separate two layers:
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Graph-handling layer (mathematical/algorithmic):} frontier bookkeeping, candidate-window definitions, reachability queries, and guard-rails against degenerate artefacts (e.g.\ disallowing self-loops). These are dictated by working with finite directed graphs and do not constitute physical claims.
+\item \textbf{Glue-dynamics layer (BCQM mechanism):} per-thread state evolution and coupling rules that embody the lockstep glue mechanisms described in BCQM V. This is where ``clock'' emergence and spatial cross-link stabilisation should originate.
+\end{enumerate}
+
+\section*{BCQM V glue mechanisms to be implemented}
+BCQM V enumerates four mechanisms sustaining lockstep:
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Shared history:} threads with overlapping realised past events have higher propensity to remain correlated.
+\item \textbf{Interference/propensity:} constructive reinforcement of propensity weights biases many threads into the same channels.
+\item \textbf{Domains:} slowly varying background conditions define domains in which threads experience similar effective kernels.
+\item \textbf{Hop coherence:} temporal depth/memory (finite coherence horizon) favours aligned hop sequences over frequent reversals.
+\end{enumerate}
+BCQM VI should implement these as explicit state dynamics and coupling terms, not as a single scalar ``synchrony'' knob.
+
+\section*{Sweet spot regression targets (from BCQM V lab notes)}
+The BCQM V glue-axis runs (A- and C-series lab notes) indicate:
+\begin{itemize}
+\item For fixed glue strengths, lockstep persistence and clock quality do \emph{not} improve monotonically with \(N\); there is a clear ``sweet spot'' in \(N\).
+\item In a representative C-series combination (phase lock + cadence), at large coherence horizon (\(\Wcoh\) large), clock quality \(Q_{\mathrm{clock}}\) is high for moderate \(N\) (notably \(N\approx 4\)), but degrades again at larger \(N\) (e.g.\ \(N=8\)).
+\end{itemize}
+These are treated as qualitative regression targets for BCQM VI once the glue-dynamics layer is in place.
+
+\section*{Minimal per-thread state (proposal)}
+Introduce explicit per-thread state variables (in addition to current frontier event id):
+\begin{itemize}
+\item \textbf{Hop state} \(v_i\in\{-1,+1\}\): a soft-rudder/telegraph hop direction.
+\item \textbf{Cadence variable} \(L_i\in\mathbb{R}\): controls hop persistence \(p_i=\sigma(L_i)\) (logit parameterisation). ``Cadence disorder'' lives as noise in the \(L_i\) dynamics.
+\item \textbf{Phase} \(\phi_i\in[0,2\pi)\): phase-lock acts by coupling \(\phi_i\) between threads; phase noise corresponds to dephasing.
+\item \textbf{Bias} \(b_i\in[-1,1]\): shared-bias axis correlates \(b_i\) across threads and biases hop decisions.
+\item \textbf{Domain label} \(d_i\in\{1,\dots,D\}\): domain glue acts by correlating noise and effective kernels within a domain and varying slowly in time.
+\end{itemize}
+
+\subsection*{Axis-to-mechanism mapping (implementation contract)}
+To avoid ``glue-as-a-scalar'' regressions, each YAML glue axis is mapped explicitly to a state-variable mechanism. This table is intended as an implementation contract for \texttt{bcqm\_vi\_spacetime}.
+
+\begin{center}
+\begin{tabular}{p{0.22\linewidth} p{0.30\linewidth} p{0.40\linewidth}}
+\hline
+\textbf{YAML axis} & \textbf{Parameter(s)} & \textbf{Acts on state / mechanism} \\
+\hline
+\texttt{cadence\_disorder} &
+\(\sigma_L^2\) (cadence noise), \(\gamma_L\) (relaxation) &
+Cadence variable \(L_i\): noise amplitude \(\mathrm{Var}(\eta_i)\) and drift-to-target strength in
+\(L_i(t+1)=(1-\gamma_L)L_i(t)+\gamma_L\bar{L}_i(t)+\eta_i(t)\). \\
+\texttt{phase\_lock} &
+\(\kappa_\phi\) (coupling), \(\sigma_\phi^2\) (phase noise) &
+Phase \(\phi_i\): Kuramoto-style coupling weighted by shared-history overlap \(w_{ij}(t)\), and phase noise \(\xi_i\). \\
+\texttt{shared\_bias} &
+\(\sigma_b^2\) (bias variance), \(\rho_b\) (shared component) &
+Bias \(b_i\): introduces correlated drift in hop/propensity selection; reduces independent deviations and/or increases common component. \\
+\texttt{domains} &
+\(\tau_d\) (domain lifetime), \(D\) (domain count), domain coupling strength &
+Domain label \(d_i\) and event label \(d(e)\): controls slow variation and within-domain correlation of noise and/or kernel modifiers. \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Required glue-state logging (for regression and diagnosis)}
+When the glue-dynamics layer is enabled, log the following in \texttt{RUN\_METRICS} (or in an attached small JSON block):
+\begin{itemize}
+\item \(\langle L_i\rangle\) and \(\mathrm{Var}(L_i)\) over threads (cadence state statistics).
+\item Kuramoto order parameter \(R \equiv \frac{1}{N}\left|\sum_i e^{i\phi_i}\right|\) (phase coherence).
+\item Domain occupancy histogram (counts per domain) and a simple entropy \(H_d\) (domain fragmentation indicator).
+\end{itemize}
+These diagnostics allow rapid attribution of ``clock'' degradation to cadence noise, weak phase coherence, or domain fragmentation.
+
+
+These are the minimal degrees of freedom needed for glue axes to be genuine mechanisms (rather than proxy scalars).
+
+\section*{Operational shared-history overlap}
+Define a shared-history overlap weight \(w_{ij}(t)\in[0,1]\) using only the event graph and a finite horizon:
+\begin{itemize}
+\item choose an operational active set \(V_{\mathrm{active}}\) (recency window of length \(\Wcoh\) is the default);
+\item define \(w_{ij}\) as the fraction of events in the last \(\Wcoh\) hops where threads \(i\) and \(j\) visited the same event (or the same small neighbourhood in \(V_{\mathrm{active}}\)).
+\end{itemize}
+This quantity realises BCQM V's ``shared history'' mechanism in a primitives-only manner and provides coupling weights for phase and cadence alignment.
+
+
+
+\subsection*{Bundle proxy from overlap}
+For regression against the BCQM IV/V bundle picture, define a bundle proxy graph on threads:
+\begin{itemize}
+\item construct an undirected thread graph with edge \(i\text{--}j\) present if \(w_{ij}(t) > w_\star\),
+\item compute connected components (bundles) and record the largest-bundle fraction \(F_{\max}(t)\).
+\end{itemize}
+This provides an operational ``bundle size'' observable in VI that is derived from shared history alone (no manifold structure). When logged alongside \(Q_{\mathrm{clock}}\), \(L\), and \(S_{\mathrm{perc}}\), it helps distinguish ``time first'' (dominant bundle forms before persistent percolation) from ``space first'' scenarios.
+
+\section*{Glue-axis dynamics (state update rules)}
+The guiding principle: glue parameters modify the \emph{state evolution} of \((L_i,\phi_i,b_i,d_i)\) and hence the selection propensities. No ad hoc exponent shaping is introduced; any nonlinearity should arise from the coupling structure and multiplicative composition of propensities.
+
+\subsection*{Hop coherence / cadence disorder}
+Model hop persistence as a telegraph process:
+\[
+\Pr(v_i(t+1)=v_i(t)) = p_i(t)=\sigma(L_i(t)),
+\qquad
+\Pr(v_i(t+1)=-v_i(t)) = 1-p_i(t).
+\]
+Update the cadence variable with drift-to-lockstep and noise:
+\[
+L_i(t+1)= (1-\gamma)L_i(t) + \gamma \,\bar{L}_i(t) + \eta_i(t),
+\]
+where \(\bar{L}_i(t)\) is a local target (e.g.\ a weighted neighbour average using \(w_{ij}\) and/or domain membership), and \(\eta_i\) is cadence noise whose variance is controlled by the cadence-disorder axis. This implements BCQM V's ``hop coherence'' mechanism.
+
+\subsection*{Phase-lock}
+Use a minimal phase-lock coupling (Kuramoto-like):
+\[
+\phi_i(t+1)=\phi_i(t)+\omega_i+\kappa_{\phi}\sum_j w_{ij}(t)\sin\!\big(\phi_j(t)-\phi_i(t)\big)+\xi_i(t),
+\]
+with phase noise \(\xi_i\) and coupling strength \(\kappa_\phi\) controlled by the phase-lock axis. This is the mechanism-level analogue of the phase-lock glue used in the BCQM V glue-axis runs.
+
+\subsection*{Shared bias}
+Implement shared bias as a correlated field over threads:
+\begin{itemize}
+\item set a global bias centre \(b_0\) and per-thread deviations \(\delta b_i\),
+\item increase cross-thread correlation of \(b_i\) with the shared-bias axis (e.g.\ by reducing \(\mathrm{Var}(\delta b_i)\) and/or increasing a shared component).
+\end{itemize}
+Hop selection uses \(b_i\) to bias the sign of \(v_i\) or the directional propensity of candidate events.
+
+\subsection*{Domains}
+Domains act as slowly varying background constraints:
+\begin{itemize}
+\item events carry a domain label \(d(e)\) that changes slowly along graph growth (a persistent label assigned at event creation);
+\item threads inherit \(d_i=d(\text{frontier}_i)\) and experience correlated noise and/or similar kernel modifiers within a domain;
+\item domain transitions are rare and controlled by the domains axis.
+\end{itemize}
+This realises BCQM V's ``domains'' mechanism and provides another source of long-lived coherence without imposing geometry.
+
+\section*{Event selection (where interference/propensity enters)}
+Given \((v_i,L_i,\phi_i,b_i,d_i)\), define candidate event weights using:
+\begin{itemize}
+\item a base retarded/horizon-limited kernel over candidate events (as per the BCQM programme),
+\item multiplicative modifiers from bias and phase alignment (propensity reinforcement),
+\item shared-history overlap and domain matching in those modifiers.
+\end{itemize}
+Constructive propensity reinforcement should then be an emergent consequence of aligned states and shared history, rather than a heuristic ``tailgating to a preferred node'' rule.
+
+\section*{Implementation sequence (minimal-assumption port)}
+To preserve the IV/V ethos, implement in small steps with regression checks.
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Cadence only:} introduce \(v_i\) and \(L_i\) with cadence-disorder control; reproduce the qualitative ``sweet spot in \(N\)'' behaviour in lockstep persistence.
+\item \textbf{Add phase-lock:} introduce \(\phi_i\) and coupling; reproduce the C-series observation that \(Q_{\mathrm{clock}}\) is high at moderate \(N\) (notably \(N\approx 4\)) but can degrade at larger \(N\).
+\item \textbf{Add domains:} introduce \(d(e)\) and \(d_i\) with slow variation; verify domains enhance persistence without forcing hub collapse.
+\item \textbf{Replace heuristics:} once the above is working, remove or quarantine scaffold-only heuristics (e.g.\ explicit tailgating to a preferred node) so that all emergent behaviour is attributable to glue dynamics.
+\end{enumerate}
+
+\section*{Deliverables and validation}
+The objective of this glue-dynamics layer is to ensure:
+\begin{itemize}
+\item the ``clock'' behaviour seen in BCQM IV/V can re-emerge from the same mechanisms in VI;
+\item cross-link/percolation behaviour becomes more interpretable and less sensitive to end-of-run spikes (persistent regimes rather than intermittent artefacts);
+\item the BCQM V sweet-spot behaviour in \(N\) is reproducible as a qualitative regression target.
+\end{itemize}
+
+\section*{Notes}
+This specification intentionally avoids introducing new functional-form assumptions (e.g.\ exponent tuning) to force a coupled transition. Any strong nonlinearity should arise from the overlap/coupling structure and the multiplicative composition of propensities, consistent with the BCQM programme.
+
+\end{document}

@@ -1,0 +1,149 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+% Consistent symbols / bookmark-safe fallbacks
+\input{bcqm_macros_v6}
+
+\title{BCQM VI Lab Note: Code/Config/Runs Session Log (v0.2)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{20 January 2026}
+
+\begin{document}
+\emergencystretch=2em
+\sloppy
+\maketitle
+
+\section*{Purpose}
+This lab note records, in one place, what was built and executed in today's BCQM VI session:
+\begin{itemize}
+\item the new \texttt{bcqm\_vi\_spacetime} scaffold and its configuration conventions,
+\item the bring-up runs (nosnaps), time-series probes, and their interpretations,
+\item the transition to a \emph{direct code descendant} workflow from BCQM V (\texttt{bcqm\_glue\_axes}),
+\item the Phase P0 compat/import pipeline and the first provenance-driven v\_glue regression runs.
+\end{itemize}
+This is an engineering/provenance record (archive-bound), not a claim of a final BCQM VI result.
+
+\section*{Desktop working layout used}
+Terminal working directory was the Desktop. Three top-level folders were used:
+\begin{itemize}
+\item \texttt{\textasciitilde/Desktop/\allowbreak bcqm\_vi\_spacetime/} --- the active program folder (code).
+\item \texttt{\textasciitilde/Desktop/\allowbreak configs/} --- YAML configs used for runs and for imported V regression configs.
+\item \texttt{\textasciitilde/Desktop/\allowbreak outputs/} --- output root for manifests and some runs (plus additional output trees created by config \texttt{out\_\allowbreak dir} paths).
+\end{itemize}
+A key gotcha: the initial \texttt{bcqm\_vi\_spacetime} zip created a nested package folder \texttt{bcqm\_vi\_spacetime/\allowbreak bcqm\_vi\_spacetime/}. Engine imports initially failed because \texttt{cli.py}/\texttt{runner.py}/\texttt{engine\_vglue.py} were in the outer folder while ported ancestor wrappers were in the inner folder. The immediate fix was to copy the ported wrapper and ancestor modules up one level so relative imports resolved cleanly.
+
+\section*{Documents produced/updated today (archive-bound)}
+\begin{itemize}
+\item Run plan/spec: \texttt{BCQM\_VI\_run\_plan\_and\_repo\_spec\_2026-01-18\_v0.2.5.tex} (baseline run plan; includes optional binned time-series requirements; snapshots guidance).
+\item Glue dynamics spec: \texttt{BCQM\_VI\_glue\_dynamics\_spec\_2026-01-20\_v0.5.tex} (glue as state dynamics; axis$\to$mechanism table; required glue-state logging; bundle proxy from overlap).
+\item Port plan (explicit direct ancestry): \texttt{BCQM\_VI\_port\_plan\_from\_BCQM\_V\_code\_2026-01-20\_v0.1.1.tex}.
+\item Compat/import mapping spec: \texttt{BCQM\_VI\_compat\_mapping\_spec\_from\_BCQM\_V\_configs\_2026-01-20\_v0.1.tex}.
+\item Session run log note (bring-up + probes): \texttt{BCQM\_VI\_lab\_note\_code\_runs\_2026-01-20\_v0.3.tex} (Phase-0 bring-up + 120-bin and 50-bin probes appended).
+\end{itemize}
+
+\section*{Codebase: \texttt{bcqm\_vi\_spacetime} scaffold (initial)}
+\subsection*{Initial scaffold (v0.1.0 zip)}
+A minimal primitives-only event-graph growth scaffold was created with:
+\begin{itemize}
+\item YAML-driven scans; fixed locked keys; validation via \texttt{config\_schema.py}.
+\item Output: \texttt{RUN\_CONFIG\_*.json} and \texttt{RUN\_METRICS\_*.json}.
+\item Optional snapshots (edge CSV + node JSON) and optional binned time-series in metrics.
+\end{itemize}
+An early syntax issue in \texttt{selection.py} (escaped triple quotes) was patched.
+
+\subsection*{Snapshot blow-up and \texttt{nosnaps} policy}
+First attempted Phase-1 coarse scans produced massive outputs (hundreds of MB per run) due to full edge/node snapshots. Runs were halted and the policy adopted:
+\begin{itemize}
+\item \textbf{Bring-up and Phase-1 coarse scans run with \texttt{snapshots.enabled: false}.}
+\item Snapshots are reserved for a small targeted subset near an identified transition.
+\end{itemize}
+
+\subsection*{Bring-up Phase 0 (scaffold, nosnaps)}
+Bring-up scan for the full scaffold engine at $N=64$ with $n\in\{0,0.2,0.4,0.6,0.8,1.0\}$ was run first for one seed, then repeated for 3 seeds.
+Key qualitative findings:
+\begin{itemize}
+\item No hub/star collapse after anti-collapse guards (hubshare small; max indegree $\mathcal{O}(N)$).
+\item Spatial proxy $S_{\mathrm{perc}}$ exhibited \emph{reproducible non-monotone behaviour}: high at $n=0.2$, low at $n=0.4$--0.6, re-percolation at $n=0.8$--1.0.
+\item Temporal proxy $L$ (scaffold tick detector) stayed 0 through $n=0.8$ and turned on only weakly at $n=1.0$.
+\end{itemize}
+
+\subsection*{Time-series probes (scaffold, nosnaps)}
+A 120-bin probe at $n\in\{0.2,0.6,1.0\}$ followed by a 50-bin baseline probe at $n\in\{0.2,0.4,0.6,0.8,1.0\}$ showed:
+\begin{itemize}
+\item For $n\le 0.8$, percolation is largely \emph{intermittent/coarsening} in the measurement window (low duty-cycle), so end-of-run $S_{\mathrm{perc}}$ can be misleading.
+\item For $n=1.0$, percolation is persistent (high duty-cycle), and the temporal proxy becomes persistently nonzero.
+\end{itemize}
+Conclusion: where time-series is enabled, scan-level summaries should use duty-cycle or mean-over-bins metrics rather than final values.
+
+\section*{Switch to ``direct descendant'' workflow from BCQM V}
+\subsection*{Input artefacts}
+The BCQM V code and configs were provided (\texttt{BCQM V CODE.zip}) and unpacked on Desktop as \texttt{\textasciitilde/Desktop/\allowbreak bcqm\_glue\_axes/} (the direct ancestor package).
+
+\subsection*{Phase P0: import/compat pipeline}
+A translation-only importer was added (\texttt{import\_v}) producing an import manifest:
+\begin{itemize}
+\item \texttt{IMPORT\_MANIFEST\_run\_C5\_phase\_plus\_cadence.json} for the V config \texttt{run\_C5\_phase\_plus\_cadence.yml}.
+\item The manifest expanded the grid: $W_{\mathrm{coh}}\in\{20,50,100\}$, $N\in\{1,2,4,8\}$, \texttt{ensembles}=32, producing 384 run entries (as expected).
+\item Provenance: the full original V YAML is stored verbatim under \texttt{provenance.v\_config} for each run entry.
+\end{itemize}
+
+\subsection*{Phase P1--P3: ported ancestor modules (verbatim copies + wrappers)}
+To make VI a direct code descendant, three V modules were copied verbatim into VI and wrapped:
+\begin{itemize}
+\item \texttt{state\_v\_ancestor.py} (verbatim V \texttt{state.py}) + wrapper \texttt{state.py}.
+\item \texttt{kernels\_v\_ancestor.py} (verbatim V \texttt{kernels.py}) + wrapper \texttt{glue\_dynamics.py}.
+\item \texttt{metrics\_v\_ancestor.py} (verbatim V \texttt{metrics.py}) + wrapper \texttt{metrics.py}.
+\end{itemize}
+Hashes were checked to ensure verbatim identity for the \texttt{*\_v\_ancestor.py} files.
+
+\subsection*{Engine dispatch and v\_glue implementation}
+\begin{itemize}
+\item Runner was patched to dispatch on \texttt{engine.mode} (\texttt{scaffold} vs \texttt{v\_glue}).
+\item A v\_glue engine was implemented using the ported V functions:
+\texttt{initialise\_cadence}, \texttt{cadence\_step}, \texttt{hop\_coherence\_step}, \texttt{shared\_bias\_step}, \texttt{phase\_lock\_step}, \texttt{domain\_glue\_step}, and V metric \texttt{compute\_lockstep\_metrics}.
+\item During the wiring stage, a fallback C5 parameter set was used if no provenance was present; once provenance configs were run, \texttt{used\_provenance\_v\_config: true} confirmed real V parameters were applied.
+\end{itemize}
+
+\section*{Regression runs executed today (v\_glue, provenance-driven)}
+\subsection*{C5 phase+cadence, W=100, seeds 56789 and 56790}
+Using provenance configs generated from the import manifest and explicitly edited to include \texttt{engine.mode: v\_glue}, the following were run:
+\begin{itemize}
+\item $W_{\mathrm{coh}}=100$, $N=1,2,4,8$, seeds $\{56789,56790\}$ (two ensembles).
+\end{itemize}
+All these runs recorded:
+\begin{itemize}
+\item \texttt{engine\_mode: v\_glue},
+\item \texttt{used\_provenance\_v\_config: true},
+\item correct C5 parameters in the \texttt{v\_glue} block (phase lock + cadence enabled; domains and shared bias disabled; hop coherence consistent with V; $q_{\mathrm{base}}$ computed from $W_{\mathrm{coh}}$).
+\end{itemize}
+The objective of this slice is an initial check of whether the BCQM V ``sweet spot'' (non-monotone clock quality vs $N$) begins to reappear under the VI descendant codebase. Two seeds are not yet decisive; the slice is a successful parity-wiring milestone.
+
+\section*{Key decisions captured}
+\begin{itemize}
+\item \textbf{No silent YAML editing:} user uploads YAML, assistant edits and returns; user runs locally.
+\item \textbf{No snapshots in bulk scans:} snapshots reserved for targeted diagnostic runs only.
+\item \textbf{No exponent-tuning:} avoid baking new assumptions; port IV/V glue mechanisms as state dynamics; use regression targets.
+\item \textbf{Direct descendant policy:} maintain verbatim ancestor copies + thin wrappers; provenance and traceability are explicit.
+\end{itemize}
+
+\section*{Immediate next steps (agreed direction)}
+\begin{enumerate}[label=\arabic*.]
+\item Expand $W=100$ v\_glue regression from 2 seeds to a modest ensemble (e.g.\ 8--16 seeds) to test the sweet-spot trend robustly.
+\item Once clock/lockstep sweet-spot regression is confirmed (V parity), reintroduce VI-only cross-links and return to the coupled $L$--$S$ transition experiment design with ablations.
+\end{enumerate}
+
+\end{document}

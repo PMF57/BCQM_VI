@@ -1,0 +1,108 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\title{BCQM VI Port Plan: \texttt{bcqm\_vi\_spacetime} as a Direct Descendant of BCQM V Glue Code (v0.1.1)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{20 January 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Purpose}
+This note defines the implementation plan to make \texttt{bcqm\_vi\_spacetime} a \emph{direct code descendant} of the BCQM V glue-axis engine. The goal is to avoid baking new assumptions into BCQM VI by porting the \emph{actual} BCQM V glue mechanisms (cadence, phase lock, shared bias, domains) into the VI codebase, preserving parameter semantics and reproducing the BCQM V ``sweet spot'' behaviour as a regression target.
+
+\section*{Provenance requirement (explicit ancestry)}
+BCQM VI code must explicitly acknowledge ancestry in the repository:
+\begin{itemize}
+\item State in \texttt{README.md}: \textit{``This repository descends directly from the BCQM V package \texttt{bcqm\_glue\_axes} (BCQM V CODE.zip).''}
+\item Keep a short \texttt{docs/PROVENANCE.md}: list the V source files ported (with commit/date when known) and the VI files they map into.
+\item Include a header comment at the top of ported modules: \textit{``Ported from BCQM V: bcqm\_glue\_axes/<file>.py''} with date/version.
+\end{itemize}
+This ensures Zenodo/GitHub archive stability and traceability.
+
+\section*{V code inventory (inputs)}
+From \texttt{BCQM V CODE.zip} the direct ancestor package is:
+\begin{itemize}
+\item \texttt{bcqm\_glue\_axes/state.py} --- thread state definitions (cadence/phase/bias/domain variables).
+\item \texttt{bcqm\_glue\_axes/kernels.py} --- glue-axis update rules (cadence, phase lock, domains, shared bias, hop coherence).
+\item \texttt{bcqm\_glue\_axes/simulate.py} --- main loop and orchestration.
+\item \texttt{bcqm\_glue\_axes/metrics.py} --- \(Q_{\mathrm{clock}}\), lockstep diagnostics, and related summaries.
+\item \texttt{bcqm\_glue\_axes/config\_schemas.py}, \texttt{cli.py} --- config parsing and run entrypoints.
+\item \texttt{configs/run\_A*.yml}, \texttt{configs/run\_C*.yml} --- the A/C-series parameter sweeps used to locate the ``sweet spot''.
+\end{itemize}
+
+\section*{Port objectives (what ``direct descendant'' means)}
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Mechanism parity:} implement cadence disorder, phase lock, shared bias, and domains as \emph{state dynamics}, matching BCQM V semantics.
+\item \textbf{Metric parity:} reproduce BCQM V definitions of \(Q_{\mathrm{clock}}\) and the lockstep persistence diagnostic(s) used in the glue runs.
+\item \textbf{Regression parity:} reproduce qualitative BCQM V outcomes (e.g.\ ``sweet spot'' in \(N\) and the phase+cadence benefit) as tests before introducing new VI features.
+\item \textbf{Isolation of new VI features:} cross-links/junction formation and geometry extraction are added \emph{after} glue parity is confirmed.
+\end{enumerate}
+
+\section*{Implementation plan (step-by-step)}
+\subsection*{Phase P0: Mapping and key alignment (no new dynamics)}
+\begin{itemize}
+\item Freeze the VI YAML keys (already locked in the VI run-plan).
+\item Create a translation layer \texttt{bcqm\_vi\_spacetime/compat\_v5\_v6.py} that maps BCQM V config fields onto the VI schema \emph{without} changing meaning. This allows running V-style configs as regression tests.
+\item Identify which V parameters are direct matches (e.g.\ \(\lambda_{\mathrm{phase}}, \sigma_L, D\)) and which need renaming only.
+\end{itemize}
+
+\subsection*{Phase P1: Port state (minimal thread state parity)}
+\begin{itemize}
+\item Port \texttt{bcqm\_glue\_axes/state.py} into \texttt{bcqm\_vi\_spacetime/state.py}.
+\item Ensure all glue-relevant fields exist in VI state (cadence variable(s), phase, bias, domain label, activity mask) with the same initialisation choices as V.
+\end{itemize}
+
+\subsection*{Phase P2: Port glue updates (mechanism parity)}
+\begin{itemize}
+\item Port the core update functions from \texttt{bcqm\_glue\_axes/kernels.py} into \texttt{bcqm\_vi\_spacetime/glue\_dynamics.py}.
+\item Ensure \texttt{glue\_dynamics.py} calls the ported kernel functions using the \emph{same internal parameter names} as BCQM V; only the YAML$\to$internal mapping in \texttt{compat\_v5\_v6.py} should differ (renaming/translation only, no semantic changes).
+\item Implement A-series single-axis modes first (cadence-only, phase-only, bias-only, domains-only), then C-series combinations.
+\item Remove (or quarantine behind a \texttt{scaffold\_mode} flag) any VI placeholder heuristics that replace these mechanisms (e.g.\ explicit tailgating-to-a-node rules).
+\end{itemize}
+
+\subsection*{Phase P3: Port metrics (clock/lockstep parity)}
+\begin{itemize}
+\item Port \texttt{bcqm\_glue\_axes/metrics.py} clock and lockstep definitions into \texttt{bcqm\_vi\_spacetime/metrics.py}.
+\item Ensure VI reports the same metrics as V for regression: \(Q_{\mathrm{clock}}\), lockstep persistence, and any secondary diagnostics used in V sweeps.
+\end{itemize}
+
+\subsection*{Phase P4: Regression tests (sweet spot reproduction)}
+\begin{itemize}
+\item Re-run the BCQM V A/C-series configs through VI (using the translation layer where needed).
+\item Confirm qualitative targets: ``sweet spot'' in \(N\) (non-monotone), and phase+cadence improvements at moderate \(N\).
+\item Treat failures here as port/semantic issues, not as reasons to tune new functional forms.
+\item \textbf{Failure triage (before tuning):} if VI fails to reproduce BCQM V behaviour, first check (i) the compat mapping layer, (ii) state initialisation parity, and (iii) random-seed handling/reproducibility, \emph{before} changing parameters or functional forms.
+\end{itemize}
+
+\subsection*{Phase P5: Introduce VI-only features (cross-links) \emph{after} parity}
+\begin{itemize}
+\item Only once P4 passes, add cross-link/junction formation to the event growth model.
+\item At that point, the coupled-transition experiments (L--S order parameters and ablations) are meaningful, because \(L\) is now generated by the IV/V mechanism rather than a scaffold proxy.
+\end{itemize}
+
+\section*{Deliverables}
+\begin{itemize}
+\item \textbf{docs/PROVENANCE.md} stating direct ancestry and listing ported modules.
+\item \textbf{compat\_v\_configs} mapping layer so V configs can be replayed.
+\item \textbf{state.py}, \textbf{glue\_dynamics.py}, \textbf{metrics.py} in VI with explicit ``ported from V'' comments.
+\item \textbf{Regression run set} reproducing the BCQM V sweet-spot behaviour before adding cross-links.
+\end{itemize}
+
+\section*{Notes}
+This plan is designed to preserve the BCQM IV/V ethos: minimise assumptions by implementing glue axes as genuine mechanisms. Graph-handling choices remain a separate layer (necessary mathematics/engineering), while glue-dynamics remains the physical mechanism layer.
+
+\end{document}

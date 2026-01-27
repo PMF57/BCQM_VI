@@ -1,0 +1,355 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\title{BCQM VI: Coupled Lockstep--Cross-link Transition\\Run Plan and \texttt{bcqm\_vi\_spacetime} Repository Specification (v0.2.3)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{18 January 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Purpose}
+This document specifies (i) a minimal, decisive run plan to test the BCQM VI core hypothesis --- a \emph{single coupled transition} with a temporal order parameter \(L\) (lockstep) and a spatial order parameter \(S\) (cross-links/percolation) --- and (ii) a lean program specification for a new repository \texttt{bcqm\_vi\_spacetime}. Particles are parked; the target is ``spacetime-first'' emergence from \textbf{events and directed edges only}.
+
+\section*{Core claim to test}
+As a control parameter \(n\) (a one-dimensional scan through glue-axis settings) is varied:
+\begin{itemize}
+\item Temporal order \(L(n)\) transitions from low to high (dominant lockstep / good clock).
+\item Spatial order \(S(n)\) transitions from low to high (cross-link/percolation into a connected web).
+\item In the full model, the transitions occur at the same critical point \(n_c\), and coupling is established by ablation.
+\end{itemize}
+
+\section*{Order parameters and required per-run observables}
+\subsection*{Temporal}
+Reuse BCQM V definitions:
+\begin{align}
+Q_{\mathrm{clock}} &\equiv \frac{\langle \Delta k\rangle}{\sigma_{\Delta k}}, &
+L &\equiv \frac{Q_{\mathrm{clock}}}{\sqrt{N}}.
+\end{align}
+Also report \(\ell_{\mathrm{lock}}\) (lockstep persistence length) as a supporting diagnostic.
+
+\subsection*{Spatial}
+Use a primary and a diagnostic spatial measure, computed on an operational active set \(V_{\mathrm{active}}\):
+\begin{itemize}
+\item \textbf{Primary:} percolation / chart-gluing order parameter
+\[
+S_{\mathrm{perc}} \equiv \frac{|C_{\max}(V_{\mathrm{active}})|}{|V_{\mathrm{active}}|},
+\]
+where \(C_{\max}\) is the largest weakly-connected component induced by \(V_{\mathrm{active}}\).
+\item \textbf{Diagnostic:} weighted junction statistic
+\[
+S_{\mathrm{junc}}^{\mathrm{w}} \equiv \frac{1}{|V_{\mathrm{active}}|}\sum_{v\in V_{\mathrm{active}}} f\!\left(\deg_{\mathrm{in}}(v)\right),
+\]
+with \(f(2)=1\), \(f(k\ge 3)=k^{\beta}\) (default \(\beta=1.5\)), and \(f(k<2)=0\).
+\end{itemize}
+
+\subsection*{Secondary spatial diagnostics (recommended)}
+These are not required for the core coupled-transition claim but provide guard-rails against ``star collapse'' or other non-space-like connectivity.
+\begin{itemize}
+\item \textbf{Clustering coefficient} \(C(V_{\mathrm{active}})\) on the induced subgraph of \(V_{\mathrm{active}}\) (weakly-connected/undirected projection).
+\item \textbf{Hub concentration metrics:} \(\max_v \deg_{\mathrm{in}}(v)\) in \(V_{\mathrm{active}}\) and a ``top-1 share''
+\[
+\mathrm{hubshare} \equiv \frac{\max_v \deg_{\mathrm{in}}(v)}{\sum_{u\in V_{\mathrm{active}}}\deg_{\mathrm{in}}(u)}.
+\]
+These help interpret \(S_{\mathrm{junc}}^{\mathrm{w}}\) when a single hub dominates.
+\end{itemize}
+
+\subsection*{Active window (must be explicit)}
+Choose one definition for all primary runs; later perform a small window-sensitivity check.
+\begin{itemize}
+\item \textbf{Recency window (recommended):} all events realised within the last \(W_{\mathrm{coh}}\) hops on each active frontier (unioned across frontiers).
+\item \textbf{Horizon ball:} all events within hop-distance \(d_{\mathrm{horizon}}\) of the most recent frontier event(s).
+\end{itemize}
+
+\section*{Burn-in and measurement windows (reduces edge effects)}
+To avoid transient/edge effects in estimating order parameters (especially \(S_{\mathrm{perc}}\)), each run should specify:
+\begin{itemize}
+\item \texttt{burn\_in\_epochs}: during which no metrics are accumulated, and
+\item \texttt{measure\_epochs}: the subsequent interval over which metrics are accumulated and averaged.
+\end{itemize}
+If time-series logging is disabled, compute per-run scalars over the final fraction of the run (equivalently, treat the last \texttt{measure\_epochs} as the measurement window).
+
+\section*{Run plan (minimal, decisive)}
+\subsection*{Quickcheck mode (new, recommended)}
+Before any scan, run a tiny quickcheck to catch implementation errors fast.
+\begin{itemize}
+\item Variant: \textbf{Full}.
+\item Size: \(N=16\) or \(N=32\).
+\item Points: \(n\in\{0.0, 0.5, 1.0\}\).
+\item Seeds: 1.
+\item Steps: 1{,}000--5{,}000.
+\end{itemize}
+Quickcheck pass criteria:
+\begin{itemize}
+\item JSON outputs produced; metrics finite and non-NaN.
+\item \(S_{\mathrm{perc}}\in[0,1]\) and \(S_{\mathrm{junc}}^{\mathrm{w}}\ge 0\).
+\item No degenerate behaviour such as ``always create new events'' or ``always pick existing'' for all \(n\).
+\end{itemize}
+
+\subsection*{Phase 0: Bring-up sanity}
+Purpose: confirm the code path and metrics behave (no time wasted on long scans if broken).
+\begin{itemize}
+\item Variant: \textbf{Full}.
+\item Size: \(N=64\).
+\item Scan: \(n\in\{0.0,0.2,0.4,0.6,0.8,1.0\}\).
+\item Seeds: 1.
+\end{itemize}
+
+\paragraph{Explicit stop/continue criteria (new).}
+Proceed to Phase 1 only if:
+\begin{itemize}
+\item \(L(n)\) shows variation across \(n\) (not flat within numerical noise),
+\item \(S_{\mathrm{perc}}(n)\) is not trivially pinned at 0 or 1 for all \(n\),
+\item secondary diagnostics do not indicate immediate star collapse (e.g. \(\mathrm{hubshare}\) near 1 for all \(n\)).
+\item ablation toggles (if already wired) visibly change at least one metric in a test point.
+\end{itemize}
+Otherwise revisit rule definitions before proceeding.
+
+\subsection*{Phase 1: Coarse critical-point find (full model)}
+Purpose: bracket \([n_-,n_+]\) where changes concentrate.
+\begin{itemize}
+\item Variant: \textbf{Full}.
+\item Sizes: \(N\in\{64,128,256\}\) (or \(\{32,64,128\}\) if runtime is tight).
+\item Scan: \(n = 0,0.1,0.2,\dots,1.0\) (11 points).
+\item Seeds: 5 (minimum 3).
+\end{itemize}
+Criticality estimates are \emph{scan-level} products computed post hoc (not per-run):
+\begin{align}
+\chi_L(n) &\equiv \mathrm{Var}_{\mathrm{seed}}[L(n)] \ \text{or}\ \left|\Delta \langle L\rangle/\Delta n\right|,\\
+\chi_S(n) &\equiv \mathrm{Var}_{\mathrm{seed}}[S_{\mathrm{perc}}(n)] \ \text{or}\ \left|\Delta \langle S_{\mathrm{perc}}\rangle/\Delta n\right|.
+\end{align}
+
+\subsection*{Phase 2: Refinement around \(n_c\) + hysteresis (full model)}
+Purpose: sharpen \(n_c(N)\) and diagnose first-order behaviour.
+\begin{itemize}
+\item Variant: \textbf{Full}.
+\item Sizes: choose two (e.g. \(N=128,256\)).
+\item Fine scan: step 0.02 on \([n_c-0.12,\,n_c+0.12]\).
+\item Seeds: 5.
+\item Add a \textbf{backward scan} (1$\to$0) initialised from the end state of the forward scan.
+\end{itemize}
+
+\subsection*{Phase 3: Ablation proof (must-have)}
+Purpose: demonstrate coupling necessity by removing mechanisms.
+Run the \textbf{Phase 1 coarse scan} for each ablation, then refine only near the full-model \(n_c\).
+\begin{itemize}
+\item Variants:
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Full} (baseline).
+\item \textbf{Lockstep-only} (suppress junction formation/mergers).
+\item \textbf{Cross-link-only} (disable synchrony stabilisers; allow junctions).
+\end{enumerate}
+\item Sizes: \(N=64,128\) (add 256 if feasible).
+\item Coarse scan: \(n=0,0.1,\dots,1.0\); seeds 5.
+\item Refinement: step 0.02 on \([n_c-0.12,\,n_c+0.12]\) for \(N=128\); seeds 5.
+\end{itemize}
+Coupling proof criterion: only the \textbf{full} variant exhibits \(n_c^{(L)}\approx n_c^{(S)}\) with aligned \(\chi_L\) and \(\chi_S\) peaks; ablations separate or remove one transition.
+
+\subsection*{Phase 4: Window-sensitivity + snapshots (small subset)}
+\begin{itemize}
+\item Re-run three points (below / near / above \(n_c\)) with the alternate \(V_{\mathrm{active}}\) definition.
+\item Store 1--2 graph snapshots per point for full + each ablation (see output spec).
+\end{itemize}
+
+\section*{Repository specification: \texttt{bcqm\_vi\_spacetime}}
+\subsection*{Design constraints}
+\begin{itemize}
+\item Primitives: events (nodes) + directed edges only; no embedded coordinates/manifold assumptions.
+\item Configuration-driven runs; reproducible via explicit seeds.
+\item Output-first: \textbf{two per-run JSON files} plus \textbf{optional snapshots}.
+\item Scan-level statistics (susceptibilities, correlations, \(n_c(N)\)) are produced by post-processing and stored separately.
+\end{itemize}
+
+\subsection*{Proposed structure}
+\begin{itemize}
+\item \texttt{bcqm\_vi\_spacetime/}
+\begin{itemize}
+\item \texttt{bcqm\_vi\_spacetime/}
+\begin{itemize}
+\item \texttt{cli.py} --- entrypoints (\texttt{run}, \texttt{scan}, \texttt{summarise}, \texttt{scaling})
+\item \texttt{config\_schema.py} --- validation (pydantic or jsonschema)
+\item \texttt{simulate.py} --- main simulation loop
+\item \texttt{graph\_store.py} --- event graph store (nodes, directed edges, weights)
+\item \texttt{selection.py} --- propensity/kernel-based selection
+\item \texttt{glue.py} --- glue axes mapping and synchrony stabilisers
+\item \texttt{ablations.py} --- ablation switches (full / lockstep-only / cross-link-only)
+\item \texttt{observables.py} --- \(Q_{\mathrm{clock}}, \ell_{\mathrm{lock}}, S_{\mathrm{perc}}, S_{\mathrm{junc}}^{\mathrm{w}}\)
+\item \texttt{snapshots.py} --- snapshot extraction (edge list, node stats)
+\item \texttt{io.py} --- write outputs and metadata
+\end{itemize}
+\item \texttt{configs/} --- YAML configs (scan definitions, default parameters)
+\item \texttt{outputs/} --- per-run outputs (JSON + snapshots)
+\item \texttt{analysis/} --- post-processing scripts (phase diagram, susceptibilities, ablation comparisons, scaling)
+\item \texttt{README.md}, \texttt{CITATION.cff}, \texttt{LICENSE}
+\end{itemize}
+\end{itemize}
+
+\subsection*{Simulation loop (high level)}
+At each epoch/tick:
+\begin{enumerate}[label=\arabic*.]
+\item For each thread, build a candidate set:
+\begin{itemize}
+\item existing events in its active set/window, and
+\item a ``NEW event'' option.
+\end{itemize}
+\item Weight candidates by base kernel/propensity multiplied by glue modifiers.
+\item Sample target event.
+\item \textbf{Cross-link mechanism (junctions):} if multiple threads select the same existing event, commit multiple incoming edges (indegree increases). For ``NEW'', default is unique per thread unless configured otherwise.
+\item Commit edges; advance each thread frontier.
+\end{enumerate}
+
+\subsection*{Ablation implementations (spec)}
+\begin{itemize}
+\item \textbf{Full:} junctions allowed; synchrony stabilisers enabled.
+\item \textbf{Lockstep-only:} disallow junction creation. If a target would make \(\deg_{\mathrm{in}}\ge 2\), force creation of a new unique event (or reroll until non-junction).
+\item \textbf{Cross-link-only:} allow junctions; disable synchrony stabilisers (remove phase-lock terms and inject cadence disorder / randomise glue parameters per thread).
+\end{itemize}
+
+\subsection*{Inputs (YAML config)}
+Minimum keys:
+\begin{itemize}
+\item \texttt{variant}: \texttt{full} | \texttt{lockstep\_only} | \texttt{crosslink\_only}
+\item \texttt{scan}: list of \(n\) values (or min/max/step)
+\item \texttt{sizes}: list of \(N\)
+\item \texttt{seeds}: list or count
+\item \texttt{W\_coh} and glue-axis parameters (with a mapping controlled by \(n\))
+\item \texttt{active\_window}: \texttt{recency} with hops=\(W_{\mathrm{coh}}\) (default) or \texttt{horizon\_ball} with \(d_{\mathrm{horizon}}\)
+\item \texttt{observables}: \texttt{beta\_junc} (default 1.5), tick definition settings, snapshot cadence
+\item \texttt{snapshots}: enable/disable; epochs or cadence; files to emit
+\end{itemize}
+
+\section*{Outputs}
+\subsection*{Per-run outputs (always)}
+For each \((\texttt{variant},N,n,\texttt{seed})\) produce:
+
+\paragraph{JSON 1: resolved configuration.}
+\texttt{RUN\_CONFIG\_\{run\_id\}.json} containing:
+\begin{itemize}
+\item fully resolved configuration (all defaults expanded),
+\item code version metadata (git commit hash if available, dirty flag),
+\item timestamp, platform, and elapsed time,
+\item run identifiers and naming.
+\end{itemize}
+
+\paragraph{JSON 2: per-run metrics.}
+\texttt{RUN\_METRICS\_\{run\_id\}.json} containing:
+\begin{itemize}
+\item scalar summaries: \(Q_{\mathrm{clock}},L,\ell_{\mathrm{lock}},S_{\mathrm{perc}},S_{\mathrm{junc}}^{\mathrm{w}}\),
+\item optional binned time-series (supported; see below) for onset/transition inspection,
+\item anomaly flags (oscillation, runaway hubbing, non-stationarity).
+\end{itemize}
+
+\subsection*{Optional binned time-series output (required capability; enabled selectively)}
+The core VI figures (order parameters vs \(n\), susceptibilities, ablation contrasts, and finite-size scaling) can be produced from per-run scalar summaries alone. However, to support diagnostic plots and to distinguish transient edge effects from steady behaviour, the repository must support an \emph{optional}, low-volume time-series output.
+
+\paragraph{Requirement.}
+When enabled in the run configuration, \texttt{RUN\_METRICS\_\{run\_id\}.json} must include binned time-series arrays over the measurement window:
+\begin{itemize}
+\item \texttt{ts\_epochs}: an increasing list of epoch indices (bin centres or bin ends),
+\item \texttt{L\_series}: \(L(t)\) evaluated per bin,
+\item \texttt{Sperc\_series}: \(S_{\mathrm{perc}}(t)\) per bin,
+\item \texttt{Sjuncw\_series}: \(S_{\mathrm{junc}}^{\mathrm{w}}(t)\) per bin,
+\item \texttt{hubshare\_series}: hubshare per bin (guard-rail against star collapse).
+\end{itemize}
+No full per-tick logging is required; the intent is a compact diagnostic time-series suitable for plots.
+
+\paragraph{Default policy.}
+Time-series output is \emph{off by default} for bulk scans. Enable it only for a small set of representative points:
+\begin{itemize}
+\item \(n\) just below \(n_c\), near \(n_c\), and just above \(n_c\),
+\item for the full model and (optionally) one ablation variant for contrast.
+\end{itemize}
+
+\paragraph{Bin count guidance.}
+A typical choice is 50--200 bins over the measurement window. Record the binning rule and bin count in \texttt{RUN\_CONFIG}. This is sufficient to detect oscillations, drift/nonstationarity, and nucleation-like onset behaviour without inflating file size.
+
+
+\subsection*{Optional snapshots (included by default)}
+Snapshots are included by default, with cadence/configurable epochs.
+\begin{itemize}
+\item \texttt{SNAPSHOT\_\{run\_id\}\_edges.csv}: edge list \((u,v,w,\text{epoch})\) at selected epochs.
+\item \texttt{SNAPSHOT\_\{run\_id\}\_nodes.json}: node stats at snapshot epochs (indegree, outdegree, created\_at, optional visitation counts).
+\end{itemize}
+\paragraph{Snapshot schedule (recommended).}
+After \(n_c\) is bracketed, record snapshots for three \(n\)-points (below/near/above \(n_c\)) for the full model and for each ablation. Use 1--2 snapshot epochs per point.
+
+\subsection*{Scan-level outputs (post-processing; new)}
+Store aggregated results separately from per-run metrics.
+\begin{itemize}
+\item \texttt{SUMMARY\_\{scan\_id\}.json}: means and variances over seeds for each \(n,N,\texttt{variant}\); includes \(\chi_L,\chi_S\).
+\item \texttt{SCALING\_\{scan\_id\}.json}: estimated \(n_c(N)\) from temporal and spatial criteria; convergence diagnostics; (optional) hysteresis measures.
+\item (Optional) \texttt{COUPLING\_\{scan\_id\}.json}: correlation \(C_{LS}(n)\) computed across seeds at each \(n\) (supportive evidence, not the primary proof).
+\end{itemize}
+
+\paragraph{Expanded schema for \texttt{SUMMARY\_\{scan\_id\}.json} (required).}
+In addition to the headline means/variances, the summary file should be treated as the definitive scan ledger and include:
+\begin{itemize}
+\item \textbf{Provenance:} \texttt{scan\_id}, code version (git hash + dirty flag), timestamp, and the set of \texttt{run\_id}s aggregated.
+\item \textbf{Grid definition:} explicit lists of \(\{N\}\), \(\{n\}\), \texttt{variant}s, and seeds used.
+\item \textbf{Seed statistics at each} \((\texttt{variant},N,n)\):
+  \begin{itemize}
+  \item \(\langle L\rangle,\ \mathrm{Var}(L)\) and \(\langle Q_{\mathrm{clock}}\rangle\) (optionally \(\langle \ell_{\mathrm{lock}}\rangle\)).
+  \item \(\langle S_{\mathrm{perc}}\rangle,\ \mathrm{Var}(S_{\mathrm{perc}})\).
+  \item \(\langle S_{\mathrm{junc}}^{\mathrm{w}}\rangle,\ \mathrm{Var}(S_{\mathrm{junc}}^{\mathrm{w}})\).
+  \item Secondary spatial guard-rails: mean/max of \(\max\deg_{\mathrm{in}}\), mean/max of \texttt{hubshare}, and mean clustering coefficient \(C(V_{\mathrm{active}})\) if computed per run.
+  \end{itemize}
+\item \textbf{Susceptibilities:} \(\chi_L(n)\) and \(\chi_S(n)\) computed by the chosen rule(s) (variance-based and/or slope-based). Store the method used (e.g. \texttt{chi\_method="var"} or \texttt{"slope"}).
+\item \textbf{Coupling correlation:} Pearson correlation \(C_{LS}(n)\) across seeds at fixed \((N,n)\) between \(L\) and \(S_{\mathrm{perc}}\), with NaN-safe handling when \(\sigma_L\) or \(\sigma_S\) vanishes (store \texttt{nan\_policy}).
+\item \textbf{Route diagnosis (heuristic, recorded not asserted):}
+define
+\[
+R(n)\equiv \frac{\langle S_{\mathrm{junc}}^{\mathrm{w}}(n)\rangle}{\langle S_{\mathrm{perc}}(n)\rangle+\varepsilon},
+\]
+with a small stabiliser \(\varepsilon\) recorded in the JSON. Provide a labelled field (e.g. \texttt{route\_label}) using a threshold \texttt{R\_thresh} that is also recorded, and always report \texttt{hubshare} alongside the label to guard against star-collapse misclassification.
+\end{itemize}
+
+\paragraph{Expanded schema for \texttt{SCALING\_\{scan\_id\}.json} (required).}
+The scaling file should contain:
+\begin{itemize}
+\item \textbf{Critical point estimates:} \(n_c^{(L)}(N)\) from temporal criteria and \(n_c^{(S)}(N)\) from spatial criteria (e.g. susceptibility peaks), including the estimator used and an uncertainty proxy (e.g. half-width of peak plateau or bootstrap over seeds).
+\item \textbf{Convergence summary:} a compact table of \(n_c(N)\) versus \(1/N\) (or the chosen scaling variable), with a simple extrapolation method recorded (even if only linear-in-\(1/N\) initially).
+\item \textbf{Hysteresis quantification (when backward scans exist):}
+  \begin{itemize}
+  \item peak-shift width \(\Delta n_c\) between forward and backward curves for both \(L\) and \(S_{\mathrm{perc}}\),
+  \item and an area-between-curves measure (numerical integral over the scanned \(n\)-interval) for both \(L\) and \(S_{\mathrm{perc}}\),
+  \end{itemize}
+with the exact computation rule recorded (grid, interpolation, and normalisation).
+\end{itemize}
+
+
+
+\section*{Anomaly flags (implementation guidance)}
+Separate anomaly flags into:
+\begin{itemize}
+\item \textbf{Tier A (scalar-only; always-on):} star collapse / hub dominance (hubshare), extreme max indegree, degenerate \(S_{\mathrm{perc}}\) pinned at 0 or 1, and other checks available from the final measurement window plus snapshots.
+\item \textbf{Tier B (time-series required; optional): (requires time-series output to be enabled for the run)} oscillatory behaviour, intermittent lockstep, connectivity collapse, or drift/non-stationarity detected from binned time-series.
+\end{itemize}
+
+
+
+
+\section*{CLI (spec)}
+\begin{itemize}
+\item \texttt{bcqmvi run --config <yml> --n <val> --N <val> --seed <int>}
+\item \texttt{bcqmvi scan --config <yml>} (runs all \(n\), sizes, seeds)
+\item \texttt{bcqmvi summarise <outputs\_dir>} (builds summary tables/plots and \texttt{SUMMARY\_*.json})
+\item \texttt{bcqmvi scaling <outputs\_dir>} (estimates \(n_c(N)\), emits \texttt{SCALING\_*.json})
+\end{itemize}
+
+\section*{Notes}
+\begin{itemize}
+\item This plan is intentionally minimal: find \(n_c\) in the full model, prove coupling by ablation, then do only small robustness checks.
+\item Claims about ``3+1D'' are deferred until after the coupled transition is established and a dimension proxy (e.g. spectral dimension) is computed on a sufficiently large connected component.
+\end{itemize}
+
+\end{document}

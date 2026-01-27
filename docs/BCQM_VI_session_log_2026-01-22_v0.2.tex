@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\input{bcqm_macros_v6}
+
+\title{BCQM VI Session Log (Detail)\\Thursday 22 January 2026 (v0.2)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{22 January 2026}
+
+\begin{document}
+\emergencystretch=2em
+\sloppy
+\maketitle
+
+\section*{Timestamp}
+Session start reference: \textbf{Thursday 22/01/26 11:26} (Europe/London).
+
+\section*{Purpose}
+Record in detail what was built and run during the session, focusing on Path A (cross-links on top of v\_glue), parity/regression automation, and the first coupled scan-from-n results (N=4 vs N=8).
+
+\section*{Key context carried into this session}
+\begin{itemize}
+\item \texttt{bcqm\_\allowbreak vi\_\allowbreak spacetime} is now a direct code descendant of BCQM V for the glue engine: V \texttt{state.py}, \texttt{kernels.py}, and \texttt{metrics.py} are present as verbatim ancestor modules with thin wrappers, and \texttt{engine.\allowbreak mode=v\_\allowbreak glue} executes those kernels and metrics.
+\item Robust statistics tools exist: \texttt{sweetspot\_check.py} and \texttt{pathA\_summary.py}, plus the import/manifest pipeline and C5/C9 parity runs.
+\end{itemize}
+
+\section*{1. Decisions and framing}
+\begin{itemize}
+\item Adopted Path A as the way forward: reintroduce ``space'' by cross-links on top of v\_glue, without altering the BCQM V glue kernels.
+\item Confirmed that multiple ``sweet spots'' across parameter ranges (W,N,metrics) are plausible; avoid assuming a single universal optimum.
+\item Adopted multi-threshold island reporting \(F_{\max}(w_\star)\) as a robustness measure because single \(w_\star\) is scale-sensitive (notably N=8).
+\end{itemize}
+
+\section*{2. Spec work produced/updated}
+\begin{itemize}
+\item \textbf{Path A integration spec:} \texttt{BCQM\_VI\_PathA\_crosslinks\_on\_vglue\_spec\_2026-01-22\_v0.3.tex}.
+\\
+Incorporated clarifications:
+\begin{itemize}
+\item explicit \(V_{\mathrm{active}}(t)\) definition,
+\item \texttt{allow\_cocreate\_merge} default OFF with trigger if ever needed,
+\item a schematic selection formula,
+\item island time-series suggestion,
+\item explicit causality statement (directed edges preserved; connectivity computed post-hoc).
+\end{itemize}
+\end{itemize}
+
+\section*{3. Code patches applied (analysis + engine)}
+All patches were delivered with unique names for manual copy after user backups. Key patches:
+\begin{itemize}
+\item \textbf{Robust stats for sweet spot:} \texttt{sweetspot\_check.py} v0.2 (median/IQR/trimmed mean) and v0.3 (local-peak heuristic for N=\{2,4,6\}).
+\item \textbf{Path A implementation:} \texttt{event\_graph.py} and an updated \texttt{engine\_vglue.py} to optionally enable a spatial cross-link layer via YAML key:
+\begin{verbatim}
+space:
+  enabled: true
+\end{verbatim}
+\item \textbf{Multi-w\_star island diagnostics (Option A):} patched \texttt{engine\_vglue.py} to record:
+\begin{itemize}
+\item \texttt{islands.F\_max\_by\_wstar} and \texttt{islands.bundle\_hist\_by\_wstar} at \(w_\star\in\{0.10,0.20,0.30\}\).
+\end{itemize}
+\item \textbf{Path A analysis:} \texttt{pathA\_summary.py} v0.2 prints multi-w\_star summaries; \texttt{coupled\_LS\_batch\_summary.py} prints clock/space/islands summaries for multiple batch folders.
+\item \textbf{Scan summariser:} \texttt{scan\_from\_n\_summary.py} groups runs by metric field \texttt{n} and prints medians/IQRs for \(Q_{\mathrm{clock}},S_{\mathrm{perc}},S_{\mathrm{junc}}^{\mathrm{w}},F_{\max}(w_\star)\).
+\item \textbf{Scan enablement:} patched \texttt{engine\_vglue.py} to support \texttt{space.\allowbreak p\_\allowbreak reuse\_\allowbreak mode=\allowbreak from\_\allowbreak n}, mapping \(p_{\mathrm{reuse}}:=n\) (clipped).
+\end{itemize}
+
+\section*{4. Runs executed}
+\subsection*{4.1 Path A p\_reuse sweep at N=4 (W=100; 8 seeds)}
+Executed three batch folders (seeds 56791--56798) at fixed \(p_{\mathrm{reuse}}\in\{0.20,0.50,0.80\}\). Summaries:
+\begin{itemize}
+\item Clock metrics were stable across p\_reuse (median \(Q_{\mathrm{clock}}\) near 0.9--1.0).
+\item Spatial metrics increased with p\_reuse (S\_perc and S\_junc\_w monotone-ish).
+\item Islands: remained fragmented through p=0.50 (F\_max=0.25), then jumped at p=0.80 (dominant island in most seeds).
+\end{itemize}
+A RUN\_REPORT and lab-note addendum were produced for the N=4 sweep.
+
+\subsection*{4.2 Path A p\_reuse sweep at N=8 (W=100; 8 seeds)}
+Executed three batch folders at \(p_{\mathrm{reuse}}\in\{0.20,0.50,0.80\}\). Space percolated strongly at higher p, but the island proxy initially appeared fully fragmented at fixed \(w_\star=0.30\). This triggered the w\_star probe below.
+
+\subsection*{4.3 w\_star probe at N=8, p\_reuse=0.80 (W=100; 8 seeds)}
+Two additional batches at w\_star = 0.20 and 0.10 demonstrated strong threshold sensitivity:
+\begin{itemize}
+\item At w\_star=0.10: full bundling in 8/8 seeds (\(\{8:1\}\)).
+\item At w\_star=0.20: mixed partitions; median \(F_{\max}\approx 0.56\).
+\item At w\_star=0.30: fully fragmented (\(\{1:8\}\)).
+\end{itemize}
+This established the need for multi-w\_star reporting as a standard diagnostic.
+
+\subsection*{4.4 Coupled batch summary (N=4 vs N=8)}
+Using \texttt{coupled\_LS\_batch\_summary.py}, a consolidated comparison was produced for:
+\begin{itemize}
+\item N=4 at p\_reuse = 0.20/0.50/0.80,
+\item N=8 at p\_reuse = 0.20/0.50 and p\_reuse = 0.80 (w\_star=0.10 batch, with multi-w\_star readout).
+\end{itemize}
+A combined RUN\_REPORT and lab-note addendum (v0.7) were produced.
+
+\subsection*{4.5 First true scan-from-n (p\_reuse := n) at W=100}
+A new run mode was enabled and executed:
+\begin{itemize}
+\item N=4, seeds 56791--56798, n \(\in\{0,0.2,0.4,0.6,0.8\}\),
+\item N=8, same seeds and n values.
+\end{itemize}
+The scan summariser produced the key result:
+\begin{itemize}
+\item \textbf{Two-step emergence}: space percolation (S\_perc) rises by n$\approx$0.2--0.4 while islands remain fragmented; island coherence rises later (n$\approx$0.6--0.8), first at lenient w\_star and later at stricter w\_star.
+\item \textbf{N dependence}: at N=4, islands become coherent even at w\_star=0.30 by n=0.8; at N=8, islands remain threshold-sensitive at n=0.8 (full at w=0.10, mixed at w=0.20, fragmented at w=0.30).
+\item Clock coherence remains viable across the scan.
+\end{itemize}
+A RUN\_REPORT and lab-note addendum (v0.8) were produced for this scan.
+
+\section*{5. Outputs produced during the session}
+\begin{itemize}
+\item RUN\_REPORT: Path A N=4 p\_reuse sweep; coupled N=4 vs N=8 p\_reuse sweep; scan-from-n N=4 vs N=8.
+\item Lab note: \texttt{BCQM\_VI\_lab\_note\_code\_runs\_2026-01-20\_v0.8.tex} updated via append-only increments from v0.5 baseline.
+\item Scripts: \texttt{analysis/\allowbreak sweetspot\_check.py}, \texttt{analysis/\allowbreak pathA\_summary.py}, \texttt{analysis/\allowbreak coupled\_LS\_batch\_summary.py}, \texttt{analysis/\allowbreak scan\_from\_n\_summary.py}.
+\end{itemize}
+
+\section*{6. Immediate next step (deferred)}
+Proceed to replicate the scan-from-n at an additional coherence horizon (e.g.\ W=50) to test robustness of the two-step emergence and N dependence across W, then return to the full coupled-transition/ablation programme for VI.
+
+\end{document}

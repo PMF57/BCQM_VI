@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\input{bcqm_macros_v6}
+
+\title{BCQM VI Session Log\\Monday 26 January 2026 (v0.1)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{26 January 2026}
+
+\begin{document}
+\emergencystretch=2em
+\sloppy
+\maketitle
+
+\section*{Timestamp}
+Session start reference: \textbf{Monday 26/01/26 11:22} (Europe/London).
+
+\section*{Purpose}
+Record the day’s work from the above timestamp, focusing on: (i) binned time-series logging for dynamic islands; (ii) paper-grade ensemble plots for dynamic islands (N=8 and N=4); (iii) ball-growth ensemble as the primary geometry diagnostic; and (iv) repository lock-down scaffolding and reproducibility plumbing.
+
+\section*{1. Code changes (high-level)}
+\subsection*{1.1 Time-series logging in the v\_glue engine}
+A binned time-series capability was added to the production v\_glue engine. When enabled by:
+\begin{verbatim}
+output:
+  write_timeseries: true
+  timeseries_bins: 80
+\end{verbatim}
+the run logs a list of time-stamped records containing (per bin):
+\begin{itemize}
+\item \(S_{\mathrm{perc}}(t)\), \(S_{\mathrm{junc}}^{\mathrm{w}}(t)\),
+\item \(|V_{\mathrm{active}}|(t)\), and the largest-component size \(|C|(t)\),
+\item \(F_{\max}(t)\) at \(w_\star\in\{0.10,0.20,0.30\}\) (multi-threshold).
+\end{itemize}
+A production indentation fault in the first patch iteration was corrected (v0.2), after which the pilot run executed cleanly.
+
+\subsection*{1.2 Robust plotting scripts}
+The ensemble plotting scripts were patched for:
+\begin{itemize}
+\item pandas handling (Series-to-scalar extraction bug fixed),
+\item consistent colour mapping locked to the Fig.\ 2 base palette (\(S_{\mathrm{perc}}\) and \(F_{\max}(w_\star=0.20)\)),
+\item stable figure numbering and titles (Fig.\ 3 / Fig.\ 3b; Fig.\ 3c / Fig.\ 3d).
+\end{itemize}
+The \texttt{pyproject.toml} dependencies were updated to include \texttt{pandas} and \texttt{matplotlib}.
+
+\subsection*{1.3 Ball-growth ensemble pipeline}
+A ``ball-growth only'' ensemble pipeline was used (no reliance on return-probability spectral-dimension fits). It reports median\(\pm\)IQR of the fraction covered \(|B(r)|/|C|\) versus radius \(r\) on the largest component, comparing n=0.4 vs n=0.8 for \(N=8\) and \(N=4\).
+
+\subsection*{1.4 Repository scaffolding}
+A repo scaffold was prepared in two forms:
+\begin{itemize}
+\item v0.1: included a \texttt{paper/} folder (later rejected to match prior BCQM repo style),
+\item v0.2: root-level \texttt{FIGURE\_MAP.md}, \texttt{REPRODUCIBILITY.md}, \texttt{ZENODO.md}, leaving paper sources and figures local/cloud and the paper PDF on Zenodo.
+\end{itemize}
+The \texttt{.gitignore} ignores bulk outputs by default.
+
+\section*{2. Runs executed and outputs produced}
+\subsection*{2.1 Dynamic islands: pilot (single seed)}
+A pilot time-series run was performed (W=100, N=8, n=0.8, seed 56796) with binned logging enabled. The pilot confirms:
+\begin{itemize}
+\item connectivity metrics remain high and comparatively stable over time,
+\item intermediate-threshold coherence \(F_{\max}(w_\star=0.20)(t)\) fluctuates, while \(w_\star=0.10\) saturates and \(w_\star=0.30\) remains fragmented.
+\end{itemize}
+Paper figures locked from this pilot: Fig.\ 2, Fig.\ 2a, Fig.\ 2b (stored locally; file mapping recorded in \texttt{FIGURE\_MAP.md}).
+
+\subsection*{2.2 Dynamic islands: ensemble (N=8)}
+An ensemble of 5 seeds (56791--56795) was run at W=100, N=8, comparing n=0.4 and n=0.8. The ensemble scripts produced median\(\pm\)IQR band figures:
+\begin{itemize}
+\item Fig.\ 3 (N=8, n=0.4): \(S_{\mathrm{perc}}(t)\) vs \(F_{\max}(w_\star=0.20)(t)\),
+\item Fig.\ 3b (N=8, n=0.8): idem.
+\end{itemize}
+
+\subsection*{2.3 Dynamic islands: ensemble (N=4)}
+The same ensemble protocol was repeated for W=100, N=4 (5 seeds; n=0.4 and n=0.8), producing:
+\begin{itemize}
+\item Fig.\ 3c (N=4, n=0.4),
+\item Fig.\ 3d (N=4, n=0.8).
+\end{itemize}
+
+\subsection*{2.4 Companion plots}
+Two companion ensemble plots of the largest-component size \(|C|(t)\) were generated:
+\begin{itemize}
+\item Fig.\ 3e (N=8) and Fig.\ 3f (N=4), comparing n=0.4 vs n=0.8.
+\end{itemize}
+
+\subsection*{2.5 Ball-growth geometry: ensemble}
+The ball-growth ensemble was run and summarised for W=100:
+\begin{itemize}
+\item Fig.\ 4 (N=8): \(|B(r)|/|C|\) vs r (median\(\pm\)IQR) comparing n=0.4 vs n=0.8,
+\item Fig.\ 4a (N=4): idem.
+\end{itemize}
+Conclusion: increasing n from 0.4 to 0.8 produces a marked tightening (shortcut-rich connectivity) on the active slice for both N values.
+
+\section*{3. Data hygiene and archiving}
+The bulk intermediate artefacts (e.g.\ SNAPSHOT CSV/JSON) were deleted. After clean-up, the working set size was reduced to approximately 43\,MB while maintaining reproducibility (selftest passes). A selftest was run and confirmed to pass after clean-up. Larger rollback archives exist separately.
+
+\section*{4. Paper drafting status}
+A draft BCQM VI paper file existed but a later revision (v0.1.3) was rejected as too sparse/rough and deferred. Next step is to resume paper drafting from the preferred baseline version, incorporating the locked figure set and the Stage--1 narrative with appropriate density.
+
+\section*{5. Next steps (deferred to next session)}
+\begin{itemize}
+\item Resume BCQM VI paper drafting with the locked figure set and the Stage--1 results narrative.
+\item Consider Stage--2 geometry ``cloth'' definition beyond \(V_{\mathrm{active}}(t)\), using ball growth as the primary diagnostic.
+\end{itemize}
+
+\end{document}

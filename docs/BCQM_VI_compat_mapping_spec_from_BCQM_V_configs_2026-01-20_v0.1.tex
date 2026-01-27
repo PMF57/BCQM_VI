@@ -1,0 +1,102 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\input{bcqm_macros_v6}
+
+\title{BCQM VI Compatibility Mapping Spec\\BCQM V Configs \texorpdfstring{$\rightarrow$}{->} \texttt{bcqm\_vi\_spacetime} (Phase P0) (v0.1)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{20 January 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Purpose}
+This note defines the Phase P0 ``compat'' mapping layer (\texttt{compat\_v5\_v6.py}) that allows BCQM V glue-axis configs to be replayed as regression tests inside \texttt{bcqm\_vi\_spacetime}. This mapping is a \emph{translation-only} layer: it renames and restructures configuration fields while preserving parameter semantics. No new functional-form assumptions are introduced here.
+
+\section*{Explicit ancestry}
+The BCQM VI codebase is a direct descendant of the BCQM V glue-axis engine. The compatibility layer exists to preserve that ancestry in a reproducible way: BCQM V configs and parameter meanings should carry forward, unchanged, into BCQM VI regression runs.
+
+\section*{Inputs (BCQM V config schema)}
+BCQM V configs (from \texttt{BCQM V CODE.zip}) use the following top-level fields:
+\begin{itemize}
+\item \texttt{output\_dir}, \texttt{random\_seed}
+\item \texttt{grid}: \texttt{W\_coh\_values}, \texttt{N\_values}, \texttt{ensembles}, \texttt{steps}, \texttt{burn\_in}
+\item glue blocks: \texttt{cadence}, \texttt{hop\_coherence}, \texttt{phase\_lock}, \texttt{shared\_bias}, \texttt{domains}
+\item \texttt{diagnostics}: \texttt{store\_states}, \texttt{compute\_lockstep}, \texttt{compute\_psd}
+\end{itemize}
+
+\section*{Outputs (VI runtime config object)}
+The mapping layer produces a VI runtime configuration that:
+\begin{itemize}
+\item satisfies the locked VI YAML key set for normal scans \emph{where possible}, and
+\item carries any additional V-only parameters into the resolved \texttt{RUN\_CONFIG} metadata (provenance block), without altering VI scan schema keys.
+\end{itemize}
+Practically: the compat layer may be used as an \emph{importer} that generates an internal config object and resolved \texttt{RUN\_CONFIG} JSON, without requiring the intermediate output to be a user-edited VI YAML file.
+
+\section*{Key mapping table (V \texorpdfstring{$\rightarrow$}{->} VI)}
+\begin{center}
+\begin{tabular}{p{0.31\linewidth} p{0.33\linewidth} p{0.30\linewidth}}
+\hline
+\textbf{BCQM V key} & \textbf{VI key / location} & \textbf{Notes} \\
+\hline
+\texttt{output\_dir} & \texttt{output.out\_dir} & Preserve relative path; prefix with a VI regression namespace if needed. \\
+\texttt{random\_seed} & \texttt{seeds} & For regression, generate a seed list deterministically from \texttt{random\_seed} and \texttt{grid.ensembles}. \\
+\texttt{grid.N\_values} & \texttt{sizes} & Direct mapping: list of bundle sizes. \\
+\texttt{grid.steps} & \texttt{steps\_total} & Direct mapping. \\
+\texttt{grid.burn\_in} & \texttt{burn\_in\_epochs} & Direct mapping. \\
+(derived) & \texttt{measure\_epochs} & Set \texttt{steps\_total - burn\_in\_epochs}. \\
+\texttt{grid.W\_coh\_values} & \texttt{W\_coh} and \texttt{active\_window.hops} & Compat layer expands into separate runs per \(\Wcoh\) value. \\
+\texttt{diagnostics.compute\_psd} & \texttt{output.write\_timeseries} & VI uses binned time-series as a compact substitute; PSD remains post-processing. \\
+\texttt{diagnostics.store\_states} & \texttt{snapshots.enabled} (regression only) & Optional: enable snapshots only for targeted checks (not for bulk sweeps). \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Glue parameters: naming and non-negotiables}
+The compat layer must \emph{not} alter glue semantics. In particular:
+\begin{itemize}
+\item Ported VI glue dynamics should use the \textbf{same internal parameter names as BCQM V} for cadence/phase/bias/domains/hop-coherence kernels.
+\item Any renaming is confined to the YAML$\to$internal mapping in \texttt{compat\_v5\_v6.py}.
+\item If a BCQM V config disables an axis (\texttt{enabled: false}), the corresponding mechanism must be disabled in VI (no ``soft enable'' via default weights).
+\end{itemize}
+
+\section*{Grid expansion algorithm}
+A BCQM V config specifies a 2D grid over \(\Wcoh\) and \(N\), plus an ensemble count. The compat layer expands this into a run list:
+\begin{enumerate}[label=\arabic*.]
+\item For each \(\Wcoh\in\texttt{grid.W\_coh\_values}\): set \texttt{W\_coh=\Wcoh} and \texttt{active\_window.hops=\Wcoh}.
+\item For each \(N\in\texttt{grid.N\_values}\): set \texttt{sizes=[N]} (or generate one run per \(N\)).
+\item For ensembles: generate \texttt{seeds} as \(\{s_0, s_0+1, \dots, s_0+\texttt{ensembles}-1\}\) with \(s_0=\texttt{random\_seed}\) (or an explicitly recorded deterministic transform).
+\item Run length: \texttt{steps\_total=grid.steps}, \texttt{burn\_in\_epochs=grid.burn\_in}, \texttt{measure\_epochs=steps\_total-burn\_in\_epochs}.
+\end{enumerate}
+This expansion must be recorded in \texttt{RUN\_CONFIG} so regression runs are reproducible from the original BCQM V YAML.
+
+\section*{Regression-first failure triage}
+If VI fails to reproduce BCQM V behaviour (e.g.\ the ``sweet spot'' in \(N\) disappears), the first response must be:
+\begin{enumerate}[label=\arabic*.]
+\item verify compat mapping (all fields mapped; no silent defaults),
+\item verify state initialisation parity (V vs VI),
+\item verify random-seed handling (seed list and RNG use),
+\end{enumerate}
+\emph{before} any parameter changes or functional-form modifications.
+
+\section*{Deliverable checklist (Phase P0)}
+\begin{itemize}
+\item \texttt{compat\_v5\_v6.py}: reads a BCQM V YAML, emits an internal VI config object and a resolved \texttt{RUN\_CONFIG} provenance block.
+\item A minimal command (or entrypoint) to run a V config as a VI regression sweep.
+\item A ``golden'' regression set: one A-series single-axis config and one C-series combined-axis config (phase+cadence) used as acceptance tests.
+\end{itemize}
+
+\end{document}

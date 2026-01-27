@@ -1,0 +1,128 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\input{bcqm_macros_v6}
+
+\title{BCQM VI Path A Integration Spec\\Cross-links on Top of v\_glue Without New Assumptions (v0.3)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{22 January 2026}
+
+\begin{document}
+\maketitle
+
+\section*{Purpose}
+We now have a verified \texttt{engine.mode=v\_glue} path in \texttt{bcqm\_vi\_spacetime} that runs the \emph{direct-ancestor} BCQM V glue dynamics (cadence/phase/bias/domains) and computes BCQM V temporal metrics (e.g.\ \(Q_{\mathrm{clock}}\)). Path A reintroduces ``space'' by adding \emph{cross-links} (shared realised events / junctions) while \emph{preserving} the V-glue clock engine unchanged. The design goal is to test whether spatial cross-link formation and temporal coherence (clock) reinforce each other, compete, or yield island/patch regimes, without baking additional functional-form assumptions into the glue dynamics.
+
+\section*{Non-negotiables (no new assumptions)}
+\begin{itemize}
+\item \textbf{Do not modify the BCQM V glue kernels or state semantics.} The V-glue code remains the time/clock engine.
+\item \textbf{Graph layer is bookkeeping + observables only.} It must not introduce extra ``forces'' or hand-tuned exponents.
+\item \textbf{Cross-links arise only from co-selection.} The only new mechanism is that two threads may select the same next event, thereby creating a junction (shared event id), or an explicit merge of simultaneously created events.
+\end{itemize}
+
+\section*{Layer separation}
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{Glue dynamics layer (already implemented):} V \texttt{ThreadState}, V kernels, and V metric \texttt{compute\_lockstep\_metrics}.
+\item \textbf{Event graph layer (new):} maintains event ids, directed edges, event creation time, and provides spatial observables. It depends on the glue dynamics only through the realised per-thread selection outcomes.
+\end{enumerate}
+
+
+oindent\textbf{Causality note:} Causal structure (directed edges) is preserved; spatial connectivity (weak components, percolation, clustering) is an emergent geometric property computed post-hoc from the realised edge graph.
+
+
+\section*{Minimal new state (per thread and global)}
+\subsection*{Per thread}
+Add, alongside the V \texttt{ThreadState}, a single integer:
+\begin{itemize}
+\item \textbf{frontier\_event\_id} \(e_i(t)\): the most recently realised event for thread \(i\).
+\end{itemize}
+No other per-thread spatial state is introduced.
+
+\subsection*{Global event store}
+Maintain:
+\begin{itemize}
+\item event registry: \((e, t_{\mathrm{create}})\)
+\item directed edge list: \((e_{\mathrm{parent}}, e_{\mathrm{child}}, t)\)
+\item indegree counts for quick junction statistics
+\end{itemize}
+
+\section*{Candidate set and co-selection rule}
+At each tick, each thread selects its next event from:
+\begin{itemize}
+\item a \textbf{NEW event} option (create a fresh event),
+\item a \textbf{REUSE option} drawn from an active set \(V_{\mathrm{active}}\) (recency window of length \(\Wcoh\)). Operational definition: at tick \(t\), \(V_{\mathrm{active}}(t)\) is the set of all events with creation time \(t_{\mathrm{create}}\ge t-\Wcoh\), unioned across the whole run (and with all current frontier events included).
+\end{itemize}
+Crucially, the selection probabilities are computed from overlap structure already present in the glue state (phase coherence, cadence gating, shared history), not from ad hoc hub-targeting.
+
+
+oindent\textbf{Example (schematic):}
+\[\Pr_i(e)\propto K_{\mathrm{base}}(e\mid e_i(t))\times M_{\phi}(\phi_i,\phi_e)\times G_L(L_i)\times M_d(d_i,d(e)),\]
+where \(K_{\mathrm{base}}\) is the retarded/horizon kernel, and the modifiers \(M_{\phi},G_L,M_d\) are computed from the V glue state (phase coherence, cadence gating, domain matching).
+
+
+\paragraph{Co-selection / junction creation.}
+If two or more threads select the same existing event, the event receives multiple parents (indegree $\ge2$), forming a junction. If two or more threads select NEW at the same tick, an optional ``co-create merge'' rule may allow them to share a single new event id rather than creating separate events, controlled by a boolean \texttt{allow\_cocreate\_merge} (default: \textbf{OFF}). Only enable if cross-link/junction density remains too low to measure (trigger: \(S_{\mathrm{junc}}^{\mathrm{w}}\) stays near 0 and \(S_{\mathrm{perc}}\) remains near its no-reuse baseline over multiple seeds).
+
+\section*{Spatial observables (graph-only)}
+Compute per run (and optionally binned time-series):
+\begin{itemize}
+\item \(S_{\mathrm{perc}}\): largest weakly connected component fraction within \(V_{\mathrm{active}}\).
+\item \(S_{\mathrm{junc}}^{\mathrm{w}}\): weighted junction statistic within \(V_{\mathrm{active}}\).
+\item Secondary diagnostics: max indegree, hubshare, clustering coefficient.
+\end{itemize}
+
+\section*{Island / bundle observables (bridge between time and space)}
+Using the overlap proxy \(w_{ij}(t)\) (from shared history in the active window), construct a thread graph with edges \(i\text{--}j\) if \(w_{ij}>w_\star\). Then report:
+\begin{itemize}
+\item largest-bundle fraction \(F_{\max}\)
+\item bundle size distribution (counts per component size)
+\end{itemize}
+This makes the ``islands of spacetime'' intuition operational and allows comparison of clock quality within vs across islands. When binned time-series are enabled, also log \(F_{\max}(t)\) and the bundle count \(N_{\mathrm{bund}}(t)\) per bin to detect intermittent vs persistent island formation and to correlate island growth with percolation onset.
+
+\section*{Outputs}
+Extend \texttt{RUN\_METRICS} under \texttt{engine\_mode=v\_glue} to include:
+\begin{itemize}
+\item existing temporal metrics: \(Q_{\mathrm{clock}}, sweetspot\) diagnostics, etc.
+\item existing glue-state diagnostics: cadence summary, phase coherence \(R\), domain histogram/entropy
+\item \textbf{new spatial metrics:} \(S_{\mathrm{perc}}, S_{\mathrm{junc}}^{\mathrm{w}}\), hubshare, max indegree, clustering
+\item \textbf{new island metrics:} \(F_{\max}\) and bundle size histogram
+\end{itemize}
+\texttt{RUN\_CONFIG} should record all new toggles (e.g.\ \texttt{allow\_cocreate\_merge}, window definitions, and any reuse/candidate pool parameters) explicitly.
+
+\section*{Minimal ablations (Path A only)}
+To detect whether space and time are coupled:
+\begin{enumerate}[label=\arabic*.]
+\item \textbf{No-crosslink ablation:} disable reuse (force NEW always) \(\Rightarrow S\) low; verify \(Q_{\mathrm{clock}}\) remains close to v\_glue baseline.
+\item \textbf{Crosslink-enabled:} enable reuse and co-selection \(\Rightarrow\) measure changes in \(Q_{\mathrm{clock}}\) and \(S\).
+\end{enumerate}
+This avoids committing to a full coupled-transition scan before the integrated engine is validated.
+
+\section*{Acceptance criteria for Path A integration}
+\begin{itemize}
+\item Parity: v\_glue \(Q_{\mathrm{clock}}\) behaviour remains consistent (within robust-stat bounds) when cross-links are disabled.
+\item Spatial sanity: cross-link enabled runs produce nontrivial \(S_{\mathrm{perc}}\) without hub/star collapse.
+\item Island sanity: bundle proxy produces interpretable \(F_{\max}\) and size distributions, making intermittent/spatial island regimes visible.
+\end{itemize}
+
+\section*{Implementation steps}
+\begin{enumerate}[label=\arabic*.]
+\item Add \texttt{event\_graph.py} (event registry + edges + indegree + connectivity metrics).
+\item Extend v\_glue engine loop: maintain frontier event ids and perform event selection per tick.
+\item Compute and log spatial/island metrics at end-of-run (then optionally binned time-series).
+\item Run a minimal A/B ablation (reuse off vs on) at a fixed W and N to validate integration.
+\end{enumerate}
+
+\end{document}

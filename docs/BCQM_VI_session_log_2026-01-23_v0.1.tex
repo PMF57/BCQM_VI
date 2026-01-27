@@ -1,0 +1,99 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xurl}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{enumitem}
+\setlist{nosep}
+
+\input{bcqm_macros_v6}
+
+\title{BCQM VI Session Log\\Friday 23 January 2026 (v0.1)}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{23 January 2026}
+
+\begin{document}
+\emergencystretch=2em
+\sloppy
+\maketitle
+
+\section*{Timestamp}
+Session start reference: \textbf{Friday 23/01/26 10:57} (Europe/London).
+
+\section*{Purpose}
+Record the day’s work: (i) W=50 scan-from-n replication; (ii) glue-off ``space-on but time destroyed'' ablation suite; (iii) code stabilisation (consolidated \texttt{engine\_vglue.py}, build fingerprint, selftest validation); and (iv) geometry diagnosis using plateau and ball-growth diagnostics.
+
+\section*{1. Runs executed (research results)}
+\subsection*{1.1 Path A scan-from-n replication at \texorpdfstring{$W_{\mathrm{coh}}=50$}{W=50}}
+Using the same scan protocol as \(W_{\mathrm{coh}}=100\), runs were performed for \(N=4\) and \(N=8\) with 8 seeds and \(n\in\{0,0.2,0.4,0.6,0.8\}\). The scan summaries show:
+\begin{itemize}
+\item \textbf{Two-step emergence persists at W=50:} \(S_{\mathrm{perc}}\) rises early (by \(n\approx 0.2\)--0.4) while islands remain at baseline, and \(F_{\max}(w_\star)\) rises later (by \(n\approx 0.6\)--0.8), first at lenient \(w_\star\).
+\item \textbf{N dependence persists:} at \(n=0.8\), \(N=4\) exhibits substantial coherence even at \(w_\star=0.30\), while \(N=8\) remains threshold-sensitive (full at \(w_\star=0.10\), mixed at \(w_\star=0.20\), fragmented at \(w_\star=0.30\)).
+\end{itemize}
+
+\subsection*{1.2 Glue-off ablation suite (referee-proof extension)}
+A full ablation suite was run at \(W_{\mathrm{coh}}=100\) for \(N=4\) and \(N=8\) across the same n-grid, comparing:
+\begin{itemize}
+\item \textbf{nospace:} space layer disabled;
+\item \textbf{space-on:} Path A with \(p_{\mathrm{reuse}}:=n\);
+\item \textbf{glue-off:} space layer enabled, but glue coherence disabled (\texttt{ablation.glue\_decohere=true}; phase/cadence couplings set to zero; hop noise increased via \texttt{q\_base\_override}).
+\end{itemize}
+Outcome:
+\begin{itemize}
+\item \textbf{nospace:} \(S_{\mathrm{perc}}=S_{\mathrm{junc}}^{\mathrm{w}}=0\) for all n and \(Q_{\mathrm{clock}}\) constant across n, confirming n does not leak into v\_glue.
+\item \textbf{glue-off:} \(S_{\mathrm{perc}}\) and \(S_{\mathrm{junc}}^{\mathrm{w}}\) still rise strongly with n (space percolates), while \(Q_{\mathrm{clock}}\) collapses to \(\mathcal{O}(10^{-2})\). Thus space/connectivity can emerge without a good clock, while clock quality requires glue coherence.
+\end{itemize}
+
+\section*{2. Code stabilisation and provenance}
+Given multiple iterative patches, the day included explicit stabilisation work:
+\begin{itemize}
+\item A consolidated \texttt{engine\_vglue.py} was established and verified via build fingerprints (hash-based provenance).
+\item The build fingerprint tool was updated to avoid hard-coded paths and to import the package reliably by injecting the repo root into \texttt{sys.path} based on \texttt{\_\_file\_\_}.
+\item A selftest suite was created and then extended to:
+\begin{itemize}
+\item validate all VI YAML configs under \texttt{configs/} against \texttt{config\_schema.validate},
+\item skip non-VI YAMLs (e.g.\ BCQM-V source configs lacking \texttt{schema\_version}) with explicit logging,
+\item and exercise major runtime paths: nospace, space-on, glue-off, and geometry hook.
+\end{itemize}
+The final selftest passed with YAML-validation enabled.
+\end{itemize}
+
+\section*{3. Geometry: negative ds as a structural signal (diagnosis, not workaround)}
+\subsection*{3.1 Audited ds scan}
+An audited geometry scan (with diagnostics: component size, fit window, r$^2$, notes) showed \texttt{ds\_valid=0} across all measured (N,n) pairs. This indicates the return-probability curve is not in a clean power-law regime on these active slices, rather than a simple fitting bug.
+
+\subsection*{3.2 Structural diagnosis via plateau and ball growth}
+A diagnostic pipeline was constructed for \(W_{\mathrm{coh}}=100\), \(N=8\), seed 56796 at representative n values. It logs:
+\begin{itemize}
+\item \textbf{plateau estimate} of return probability vs \(1/|C|\) (largest-component size),
+\item \textbf{ball growth} \(|B(r)|\) vs radius r on the largest component (mean over sampled roots).
+\end{itemize}
+Results indicate a locally sparse but globally shortcut-rich active graph:
+\begin{itemize}
+\item As n increases, the largest component size \textbf{shrinks} substantially (activity concentrates).
+\item The walk approaches a mixing plateau on the finite component (plateau comparable to \(1/|C|\) in some regimes), explaining low r$^2$ and invalid ds fits.
+\item Ball-growth curves show modest local growth but high global coverage by r$\approx$30 at higher n, consistent with ``channels + shortcuts'' rather than a stable manifold-like scaling regime.
+\end{itemize}
+
+\section*{4. Artefacts produced today}
+\begin{itemize}
+\item RUN\_REPORT and lab-note addendum for the W=50 robustness scan.
+\item RUN\_REPORT and lab-note addendum for the glue-off ablation suite.
+\item Consolidated build fingerprint and a hardened selftest suite with YAML validation and non-VI config skipping.
+\item Geometry diagnosis and ball-growth scans (N=8 and N=4), plus a figure (PDF) and CSV for ball growth (W=100; N=4 vs N=8; n=0.2/0.6/0.8).
+\item A timestamped rollback archive (1.5\,GB) including code, configs, and outputs.
+\end{itemize}
+
+\section*{Deferred topic}
+A conceptual discussion was begun on whether ``history'' persists at the primitive level versus being encoded in present state (Markov-style). This is deferred to the next session.
+
+\end{document}
