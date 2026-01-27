@@ -1,0 +1,17 @@
+BCQM VI Geometry scan (W=100; n={0.2,0.6,0.8}) — Fri 23 Jan 2026 12:41:04 GMT
+
+== RUN: configs/generated_vreg_C5_subset/geometry_scan_C5_W100_N4.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/geometry_scan_C5_W100_N8.yml ==
+
+== SUMMARY: ds_est by (N,n) ==
+N | n | count | ds mean±std | ds median [Q1,Q3]
+--|---|------:|------------|------------------
+4 | 0.2 |     5 | 0.327±1.4 | 0.352 [-1.17,1.77]
+4 | 0.6 |     8 | 0.497±1.3 | 0.0414 [-0.509,1.43]
+4 | 0.8 |     8 | -0.447±0.47 | -0.326 [-0.433,-0.213]
+8 | 0.2 |     8 | 1.64±1.9 | 1.74 [1.08,2.49]
+8 | 0.6 |     8 | 2.34±1.2 | 2.42 [1.88,3.06]
+8 | 0.8 |     8 | 0.658±1.2 | 0.902 [-0.0664,1.07]
+
+DONE. Wrote: outputs/analysis/20260123_124104_geometry_scan_W100.txt

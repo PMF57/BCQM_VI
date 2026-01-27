@@ -1,0 +1,15 @@
+BCQM VI Geometry diagnosis — Fri 23 Jan 2026 14:35:53 GMT
+
+== RUN: configs/generated_vreg_C5_subset/geometry_diagnosis_C5_W100_N8_n0p6_seed56796.yml ==
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/cli.py", line 7, in <module>
+    from .runner import run_from_config, scan_from_config
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/runner.py", line 25, in <module>
+    from .engine_vglue import run_single_v_glue
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/engine_vglue.py", line 38, in <module>
+    from .event_graph import EventGraph
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/event_graph.py", line 265
+    return out
+IndentationError: unexpected indent

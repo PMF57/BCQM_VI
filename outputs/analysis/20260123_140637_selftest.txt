@@ -1,0 +1,29 @@
+BCQM VI SELFTEST — Fri Jan 23 14:06:37 2026
+
+OK: skipped 1 non-VI YAML(s)
+== YAML SKIPPED (non-VI) ==
+/Users/pmf/Desktop/configs/run_C5_phase_plus_cadence.yml: no schema_version (treated as non-VI config)
+
+OK: all VI YAML configs under configs/ validate()
+
+== RUN nospace: configs/selftests/selftest_vglue_nospace.yml ==
+
+== RUN space_on: configs/selftests/selftest_space_on.yml ==
+
+== RUN glueoff: configs/selftests/selftest_glueoff_space_on.yml ==
+
+== RUN geometry: configs/selftests/selftest_geometry.yml ==
+
+OK: nospace outputs exist
+OK: nospace engine_mode=v_glue
+OK: nospace space_state.enabled=false
+OK: space_on outputs exist
+OK: space_on space_state.enabled=true
+OK: space_on islands multi-wstar present
+OK: glueoff outputs exist
+OK: glueoff space_state.enabled=true
+OK: glueoff ablation recorded in RUN_CONFIG
+OK: geometry outputs exist
+OK: geometry block present in RUN_METRICS
+
+SELFTEST PASSED

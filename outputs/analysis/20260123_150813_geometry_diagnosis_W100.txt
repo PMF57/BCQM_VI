@@ -1,0 +1,99 @@
+BCQM VI Geometry diagnosis — Fri 23 Jan 2026 15:08:13 GMT
+
+== RUN: configs/generated_vreg_C5_subset/geometry_diagnosis_C5_W100_N8_n0p6_seed56796.yml ==
+
+== DIAGNOSIS ==
+FILE: outputs_glue_axes/geometry_diagnosis_C5/W100/N8/n0p6_seed56796/RUN_METRICS_geometry_diagnosis_C5_W100_N8_n0p6_seed56796__full__N8__n0.600__seed56796.json
+N=8 n=0.6 seed=56796
+comp_size=304 1/comp_size=0.003289473684210526
+plateau_est=0.005714285714285714
+ds_est=0.1222419694985099 ds_valid=False r2=0.001770839346448616 fit=[20,60] notes=fit_invalid
+
+P0_downsample:
+  t=   0  P0=1.0
+  t=   1  P0=0.0
+  t=   2  P0=0.375
+  t=   3  P0=0.0
+  t=   4  P0=0.135
+  t=   5  P0=0.0
+  t=   6  P0=0.135
+  t=   7  P0=0.0
+  t=   8  P0=0.075
+  t=   9  P0=0.0
+  t=  10  P0=0.065
+  t=  11  P0=0.0
+  t=  12  P0=0.035
+  t=  13  P0=0.0
+  t=  14  P0=0.045
+  t=  15  P0=0.0
+  t=  16  P0=0.035
+  t=  17  P0=0.01
+  t=  18  P0=0.025
+  t=  19  P0=0.005
+  t=  20  P0=0.02
+  t=  21  P0=0.01
+  t=  22  P0=0.015
+  t=  23  P0=0.005
+  t=  24  P0=0.015
+  t=  25  P0=0.0
+  t=  26  P0=0.025
+  t=  27  P0=0.0
+  t=  28  P0=0.015
+  t=  29  P0=0.0
+  t=  30  P0=0.02
+  t=  31  P0=0.005
+  t=  32  P0=0.01
+  t=  33  P0=0.005
+  t=  34  P0=0.015
+  t=  35  P0=0.0
+  t=  36  P0=0.02
+  t=  37  P0=0.0
+  t=  38  P0=0.005
+  t=  39  P0=0.0
+  t=  40  P0=0.01
+  t=  41  P0=0.0
+  t=  42  P0=0.02
+  t=  43  P0=0.0
+  t=  44  P0=0.01
+  t=  45  P0=0.0
+  t=  46  P0=0.01
+  t=  47  P0=0.0
+  t=  48  P0=0.015
+  t=  49  P0=0.0
+  t=  50  P0=0.01
+  t=  51  P0=0.0
+  t=  52  P0=0.0
+  t=  53  P0=0.0
+  t=  54  P0=0.0
+  t=  55  P0=0.0
+  t=  56  P0=0.015
+  t=  57  P0=0.0
+  t=  58  P0=0.015
+  t=  59  P0=0.0
+  t=  60  P0=0.01
+
+ball_growth: comp_size=304 samples=30 r_max=25
+  mean_ball(r) first 15:
+    r= 0 |B|=1
+    r= 1 |B|=3.5
+    r= 2 |B|=7.8
+    r= 3 |B|=12.6
+    r= 4 |B|=17.3
+    r= 5 |B|=22.9
+    r= 6 |B|=28.7
+    r= 7 |B|=34.8
+    r= 8 |B|=39.8
+    r= 9 |B|=44.6
+    r=10 |B|=49.3
+    r=11 |B|=54.4
+    r=12 |B|=59.8
+    r=13 |B|=65.9
+    r=14 |B|=72.8
+  mean_ball(r) last 5:
+    r=21 |B|=140
+    r=22 |B|=157
+    r=23 |B|=180
+    r=24 |B|=216
+    r=25 |B|=268
+
+DONE. Wrote: outputs/analysis/20260123_150813_geometry_diagnosis_W100.txt

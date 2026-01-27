@@ -1,0 +1,77 @@
+BCQM VI Geometry diagnosis — Fri 23 Jan 2026 14:48:01 GMT
+
+== RUN: configs/generated_vreg_C5_subset/geometry_diagnosis_C5_W100_N8_n0p6_seed56796.yml ==
+
+== DIAGNOSIS ==
+FILE: outputs_glue_axes/geometry_diagnosis_C5/W100/N8/n0p6_seed56796/RUN_METRICS_geometry_diagnosis_C5_W100_N8_n0p6_seed56796__full__N8__n0.600__seed56796.json
+N=8 n=0.6 seed=56796
+comp_size=304 1/comp_size=0.003289473684210526
+plateau_est=0.005714285714285714
+ds_est=0.1222419694985099 ds_valid=False r2=0.001770839346448616 fit=[20,60] notes=fit_invalid
+
+P0_downsample:
+  t=   0  P0=1.0
+  t=   1  P0=0.0
+  t=   2  P0=0.375
+  t=   3  P0=0.0
+  t=   4  P0=0.135
+  t=   5  P0=0.0
+  t=   6  P0=0.135
+  t=   7  P0=0.0
+  t=   8  P0=0.075
+  t=   9  P0=0.0
+  t=  10  P0=0.065
+  t=  11  P0=0.0
+  t=  12  P0=0.035
+  t=  13  P0=0.0
+  t=  14  P0=0.045
+  t=  15  P0=0.0
+  t=  16  P0=0.035
+  t=  17  P0=0.01
+  t=  18  P0=0.025
+  t=  19  P0=0.005
+  t=  20  P0=0.02
+  t=  21  P0=0.01
+  t=  22  P0=0.015
+  t=  23  P0=0.005
+  t=  24  P0=0.015
+  t=  25  P0=0.0
+  t=  26  P0=0.025
+  t=  27  P0=0.0
+  t=  28  P0=0.015
+  t=  29  P0=0.0
+  t=  30  P0=0.02
+  t=  31  P0=0.005
+  t=  32  P0=0.01
+  t=  33  P0=0.005
+  t=  34  P0=0.015
+  t=  35  P0=0.0
+  t=  36  P0=0.02
+  t=  37  P0=0.0
+  t=  38  P0=0.005
+  t=  39  P0=0.0
+  t=  40  P0=0.01
+  t=  41  P0=0.0
+  t=  42  P0=0.02
+  t=  43  P0=0.0
+  t=  44  P0=0.01
+  t=  45  P0=0.0
+  t=  46  P0=0.01
+  t=  47  P0=0.0
+  t=  48  P0=0.015
+  t=  49  P0=0.0
+  t=  50  P0=0.01
+  t=  51  P0=0.0
+  t=  52  P0=0.0
+  t=  53  P0=0.0
+  t=  54  P0=0.0
+  t=  55  P0=0.0
+  t=  56  P0=0.015
+  t=  57  P0=0.0
+  t=  58  P0=0.015
+  t=  59  P0=0.0
+  t=  60  P0=0.01
+
+No ball_growth in geometry.
+
+DONE. Wrote: outputs/analysis/20260123_144801_geometry_diagnosis_W100.txt

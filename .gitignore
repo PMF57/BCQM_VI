@@ -10,8 +10,8 @@ venv/
 .DS_Store
 
 # Generated outputs (keep local/cloud; not in repo)
-outputs/
-outputs_glue_axes/
+# outputs/
+# outputs_glue_axes/
 
 # Archives
 *.zip

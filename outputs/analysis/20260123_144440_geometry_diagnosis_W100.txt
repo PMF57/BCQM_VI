@@ -1,0 +1,32 @@
+BCQM VI Geometry diagnosis — Fri 23 Jan 2026 14:44:40 GMT
+
+== RUN: configs/generated_vreg_C5_subset/geometry_diagnosis_C5_W100_N8_n0p6_seed56796.yml ==
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/cli.py", line 55, in <module>
+    main()
+    ~~~~^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/cli.py", line 36, in main
+    run_from_config(cfg)
+    ~~~~~~~~~~~~~~~^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/runner.py", line 317, in run_from_config
+    run_single(cfg, int(N), float(n), int(seed))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/runner.py", line 94, in run_single
+    run_single_v_glue(cfg, N, n, seed)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/engine_vglue.py", line 491, in run_single_v_glue
+    geometry_out.update(g.estimate_spectral_dimension(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        active_end,
+        ^^^^^^^^^^^
+    ...<4 lines>...
+        seed=int(seed) + 12345,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/event_graph.py", line 316, in estimate_spectral_dimension
+    b,a,r2 = self._linear_fit_loglog(ts, ys)
+             ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: EventGraph._linear_fit_loglog() takes 2 positional arguments but 3 were given

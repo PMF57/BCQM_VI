@@ -1,0 +1,41 @@
+BCQM VI Ball-growth scan (W=100, N=4, seed=56796; n={0.2,0.6,0.8}) — Fri 23 Jan 2026 15:19:43 GMT
+
+== RUN: configs/generated_vreg_C5_subset/ball_growth_diag_C5_W100_N4_n0p2_seed56796.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/ball_growth_diag_C5_W100_N4_n0p6_seed56796.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/ball_growth_diag_C5_W100_N4_n0p8_seed56796.yml ==
+
+== SUMMARY ==
+== n=0.2 ==
+comp_size=277 1/comp_size=0.0036101083032490976 plateau_est=0.025 ds_est=0.03799950775179751 ds_valid=False r2=3.2943214322567194e-05 notes=fit_invalid
+  r= 1 |B|=  3.025  frac=0.010920577617328519
+  r= 5 |B|= 14.675  frac=0.05297833935018051
+  r=10 |B|= 41.125  frac=0.14846570397111913
+  r=15 |B|= 73.700  frac=0.2660649819494585
+  r=20 |B|=113.175  frac=0.4085740072202166
+  r=25 |B|=162.075  frac=0.5851083032490975
+  r=30 |B|=223.075  frac=0.8053249097472924
+
+== n=0.6 ==
+comp_size=147 1/comp_size=0.006802721088435374 plateau_est=0.01 ds_est=1.7242546785180046 ds_valid=False r2=0.17767229510850013 notes=fit_invalid
+  r= 1 |B|=  3.650  frac=0.024829931972789116
+  r= 5 |B|= 16.175  frac=0.11003401360544218
+  r=10 |B|= 35.425  frac=0.2409863945578231
+  r=15 |B|= 55.050  frac=0.37448979591836734
+  r=20 |B|= 75.375  frac=0.5127551020408163
+  r=25 |B|=104.825  frac=0.7130952380952381
+  r=30 |B|=143.200  frac=0.9741496598639455
+
+== n=0.8 ==
+comp_size=84 1/comp_size=0.011904761904761904 plateau_est=0.005714285714285714 ds_est=1.7429990918521432 ds_valid=False r2=0.25696669393906524 notes=fit_invalid
+  r= 1 |B|=  4.350  frac=0.05178571428571428
+  r= 5 |B|= 18.300  frac=0.21785714285714286
+  r=10 |B|= 32.975  frac=0.3925595238095238
+  r=15 |B|= 46.825  frac=0.5574404761904762
+  r=20 |B|= 60.600  frac=0.7214285714285714
+  r=25 |B|= 73.875  frac=0.8794642857142857
+  r=30 |B|= 83.850  frac=0.9982142857142856
+
+
+DONE. Wrote: outputs/analysis/20260123_151943_ball_growth_scan_W100_N4.txt

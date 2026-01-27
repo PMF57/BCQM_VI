@@ -1,0 +1,10 @@
+BCQM VI timeseries ensemble (W=100, N=4; n={0.4,0.8}; 5 seeds) — Mon 26 Jan 2026 13:27:33 GMT
+
+== RUN: configs/generated_vreg_C5_subset/timeseries_ens_C5_W100_N4_n0p4_s56791_56795_spaceon.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/timeseries_ens_C5_W100_N4_n0p8_s56791_56795_spaceon.yml ==
+
+== SUMMARY ==
+Wrote CSVs to outputs/timeseries_ensemble and figures to figs/
+
+DONE. Wrote: outputs/analysis/20260126_132733_timeseries_ensemble_W100_N4.txt

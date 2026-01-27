@@ -1,0 +1,25 @@
+{
+  "L": 0.0,
+  "N": 32,
+  "Q_clock": 0.0,
+  "S_junc_w": 1.0066106268771962,
+  "S_perc": 0.9884622659353131,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "beta_junc": 1.5,
+  "burn_in_epochs": 1000,
+  "clustering": 0.0,
+  "elapsed_seconds": 15.215042114257812,
+  "ell_lock": 0,
+  "hubshare": 0.0014416775884665792,
+  "max_indegree": 11,
+  "measure_epochs": 4000,
+  "n": 0.5,
+  "run_id": "quickcheck_full_v0_1_patch1__full__N32__n0.500__seed1",
+  "seed": 1,
+  "steps_total": 5000,
+  "variant": "full"
+}

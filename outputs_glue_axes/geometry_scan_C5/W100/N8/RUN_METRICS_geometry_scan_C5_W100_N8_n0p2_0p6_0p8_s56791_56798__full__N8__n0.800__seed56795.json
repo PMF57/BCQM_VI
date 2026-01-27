@@ -1,0 +1,111 @@
+{
+  "L": 0.5944983266170228,
+  "L_inst": 0.7392777777777778,
+  "N": 8,
+  "Q_clock": 1.6814951926198074,
+  "S_junc_w": 4.267291312716392,
+  "S_perc": 0.96,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 500,
+  "clustering": 0.04852577052577053,
+  "elapsed_seconds": 0.8534760475158691,
+  "ell_lock": 83.80807534383763,
+  "engine_mode": "v_glue",
+  "geometry": {
+    "P_return_sample": [
+      0.0,
+      0.30666666666666664,
+      0.0033333333333333335,
+      0.12333333333333334,
+      0.013333333333333334,
+      0.04666666666666667,
+      0.013333333333333334,
+      0.03,
+      0.01,
+      0.02,
+      0.013333333333333334,
+      0.02
+    ],
+    "comp_size": 168,
+    "ds_est": 0.8214995660508358,
+    "enabled": true,
+    "fit_t_max": 400,
+    "fit_t_min": 30,
+    "n_walkers": 300,
+    "t_max": 60
+  },
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 0.9717293545333601,
+      "var": 5.39260384428426e-32
+    },
+    "domains": {
+      "counts": {
+        "0": 8
+      },
+      "entropy": -1.000088900581841e-12
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.019067796610169493,
+  "islands": {
+    "F_max": 0.125,
+    "F_max_by_wstar": {
+      "0.10": 1.0,
+      "0.20": 0.125,
+      "0.30": 0.125
+    },
+    "bundle_hist": {
+      "1": 8
+    },
+    "bundle_hist_by_wstar": {
+      "0.10": {
+        "8": 1
+      },
+      "0.20": {
+        "1": 8
+      },
+      "0.30": {
+        "1": 8
+      }
+    },
+    "bundle_sizes": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "w_star": 0.3
+  },
+  "max_indegree": 9,
+  "measure_epochs": 4500,
+  "n": 0.8,
+  "run_id": "geometry_scan_C5_W100_N8_n0p2_0p6_0p8_s56791_56798__full__N8__n0.800__seed56795",
+  "seed": 56795,
+  "space_state": {
+    "S_junc_w": 4.267291312716392,
+    "S_perc": 0.96,
+    "V_active_size": 175,
+    "allow_cocreate_merge": false,
+    "clustering": 0.04852577052577053,
+    "domain_match": true,
+    "enabled": true,
+    "hubshare": 0.019067796610169493,
+    "max_indegree": 9,
+    "p_reuse_policy": "from_n",
+    "p_reuse_value_last": 0.8
+  },
+  "steps_total": 5000,
+  "variant": "full"
+}

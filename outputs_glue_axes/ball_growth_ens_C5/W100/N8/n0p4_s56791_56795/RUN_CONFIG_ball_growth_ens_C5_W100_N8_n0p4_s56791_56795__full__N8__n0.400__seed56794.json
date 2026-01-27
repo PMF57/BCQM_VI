@@ -1,0 +1,147 @@
+{
+  "N": 8,
+  "description": "Ball growth ensemble: W=100, N=8, n=0.4, seeds 56791\u201356795, ball_growth_only",
+  "engine_mode": "v_glue",
+  "experiment_id": "ball_growth_ens_C5_W100_N8_n0p4_s56791_56795",
+  "n": 0.4,
+  "platform": {
+    "python": "3.13.7"
+  },
+  "resolved": {
+    "W_coh": 100,
+    "active_window": {
+      "hops": 100,
+      "mode": "recency"
+    },
+    "anomaly_thresholds": {
+      "degenerate_S_tol": 1e-06,
+      "hubshare_star": 0.9,
+      "max_indegree_factor": 3.0
+    },
+    "burn_in_epochs": 400,
+    "crosslinks": {
+      "allow_junctions": true,
+      "new_event_policy": "unique_per_thread"
+    },
+    "description": "Ball growth ensemble: W=100, N=8, n=0.4, seeds 56791\u201356795, ball_growth_only",
+    "engine": {
+      "mode": "v_glue",
+      "notes": "Ball growth ensemble (mode=ball_growth_only)"
+    },
+    "experiment_id": "ball_growth_ens_C5_W100_N8_n0p4_s56791_56795",
+    "geometry": {
+      "ball_r_max": 30,
+      "ball_samples": 40,
+      "enabled": true,
+      "mode": "ball_growth_only"
+    },
+    "glue": {
+      "axes": {
+        "cadence_disorder": {
+          "max": 1.0,
+          "min": 1.0
+        },
+        "domains": {
+          "max": 0.0,
+          "min": 0.0
+        },
+        "phase_lock": {
+          "max": 0.0,
+          "min": 0.0
+        },
+        "shared_bias": {
+          "max": 0.0,
+          "min": 0.0
+        }
+      },
+      "mapping_mode": "linear",
+      "profile": "composite_all"
+    },
+    "measure_epochs": 1600,
+    "observables": {
+      "beta_junc": 1.5,
+      "compute_clustering": false,
+      "compute_hub_metrics": false,
+      "tick_definition": "v_clock_from_V"
+    },
+    "output": {
+      "out_dir": "outputs_glue_axes/ball_growth_ens_C5/W100/N8/n0p4_s56791_56795",
+      "timeseries_bins": 50,
+      "write_timeseries": false
+    },
+    "scan": {
+      "n_values": [
+        0.4
+      ]
+    },
+    "schema_version": "vi_spacetime_config_v0.1",
+    "seeds": [
+      56791,
+      56792,
+      56793,
+      56794,
+      56795
+    ],
+    "sizes": [
+      8
+    ],
+    "snapshots": {
+      "enabled": false
+    },
+    "space": {
+      "allow_cocreate_merge": false,
+      "beta_junc": 1.5,
+      "domain_match": true,
+      "enabled": true,
+      "log_island_timeseries": false,
+      "p_reuse_mode": "from_n",
+      "w_star": 0.3
+    },
+    "steps_total": 2000,
+    "variant": "full"
+  },
+  "run_id": "ball_growth_ens_C5_W100_N8_n0p4_s56791_56795__full__N8__n0.400__seed56794",
+  "schema_version": "vi_spacetime_config_v0.1",
+  "seed": 56794,
+  "v_glue": {
+    "W_coh": 100,
+    "ablation": {},
+    "cadence": {
+      "distribution": "lognormal",
+      "enabled": true,
+      "lambda_cadence": 0.06,
+      "mean_T": 1.0,
+      "sigma_T": 0.2
+    },
+    "domains": {
+      "enabled": false,
+      "lambda_domain": 0.0,
+      "merge_threshold": 0.8,
+      "min_domain_size": 1,
+      "n_initial_domains": 1,
+      "split_threshold": 0.3
+    },
+    "hop_coherence": {
+      "alpha": 1.0,
+      "form": "power_law",
+      "k_prefactor": 2.0,
+      "memory_depth": 1,
+      "q_base": 0.02
+    },
+    "phase_lock": {
+      "enabled": true,
+      "lambda_phase": 0.1,
+      "noise_sigma": 0.0,
+      "omega_0": 0.1,
+      "theta_break": 1.5,
+      "theta_join": 0.3
+    },
+    "scaled_fallback_by_n": true,
+    "shared_bias": {
+      "enabled": false,
+      "lambda_bias": 0.0
+    },
+    "used_provenance_v_config": false
+  },
+  "variant": "full"
+}

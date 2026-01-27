@@ -1,0 +1,68 @@
+{
+  "L": 0.47355547120691444,
+  "L_inst": 0.7757777777777778,
+  "N": 4,
+  "Q_clock": 0.9471109424138289,
+  "S_junc_w": 0.7697518506141402,
+  "S_perc": 0.8411214953271028,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 500,
+  "clustering": 0.020085470085470087,
+  "elapsed_seconds": 0.6488990783691406,
+  "ell_lock": 131.59734283627083,
+  "engine_mode": "v_glue",
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 1.1096641319434515,
+      "var": 1.8488927466117464e-31
+    },
+    "domains": {
+      "counts": {
+        "0": 4
+      },
+      "entropy": -1.000088900581841e-12
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.012779552715654952,
+  "islands": {
+    "F_max": 0.25,
+    "bundle_hist": {
+      "1": 4
+    },
+    "bundle_sizes": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "w_star": 0.3
+  },
+  "max_indegree": 4,
+  "measure_epochs": 4500,
+  "n": 0.0,
+  "run_id": "vreg_C5_W100_N4_seed56789_B_space_on_preuse_0p50__full__N4__n0.000__seed56789",
+  "seed": 56789,
+  "space_state": {
+    "S_junc_w": 0.7697518506141402,
+    "S_perc": 0.8411214953271028,
+    "V_active_size": 214,
+    "allow_cocreate_merge": false,
+    "clustering": 0.020085470085470087,
+    "domain_match": true,
+    "enabled": true,
+    "hubshare": 0.012779552715654952,
+    "max_indegree": 4,
+    "p_reuse_policy": "fixed",
+    "p_reuse_value_last": 0.5
+  },
+  "steps_total": 5000,
+  "variant": "full"
+}

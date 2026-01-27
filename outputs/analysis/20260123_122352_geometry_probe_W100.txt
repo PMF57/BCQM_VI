@@ -1,0 +1,20 @@
+BCQM VI Geometry probe (spectral dimension) — Fri 23 Jan 2026 12:23:52 GMT
+
+== RUN: configs/generated_vreg_C5_subset/geometry_probe_C5_W100_N4_n0p8.yml ==
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/cli.py", line 55, in <module>
+    main()
+    ~~~~^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/cli.py", line 36, in main
+    run_from_config(cfg)
+    ~~~~~~~~~~~~~~~^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/runner.py", line 311, in run_from_config
+    validate(cfg)
+    ~~~~~~~~^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/config_schema.py", line 95, in validate
+    glue = _req(cfg, "glue")
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/config_schema.py", line 13, in _req
+    raise ConfigError(f"Missing required key: {key}")
+bcqm_vi_spacetime.config_schema.ConfigError: Missing required key: glue

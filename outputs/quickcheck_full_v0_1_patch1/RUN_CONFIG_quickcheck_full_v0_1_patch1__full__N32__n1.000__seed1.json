@@ -1,0 +1,97 @@
+{
+  "N": 32,
+  "description": "Quickcheck: N=32, n in {0,0.5,1}, 1 seed, short run",
+  "experiment_id": "quickcheck_full_v0_1_patch1",
+  "n": 1.0,
+  "platform": {
+    "python": "3.13.7"
+  },
+  "resolved": {
+    "W_coh": 256,
+    "active_window": {
+      "hops": 256,
+      "mode": "recency"
+    },
+    "anomaly_thresholds": {
+      "degenerate_S_tol": 1e-06,
+      "hubshare_star": 0.9,
+      "max_indegree_factor": 3.0
+    },
+    "burn_in_epochs": 1000,
+    "crosslinks": {
+      "allow_junctions": true,
+      "new_event_policy": "unique_per_thread"
+    },
+    "description": "Quickcheck: N=32, n in {0,0.5,1}, 1 seed, short run",
+    "experiment_id": "quickcheck_full_v0_1_patch1",
+    "glue": {
+      "axes": {
+        "cadence_disorder": {
+          "max": 0.0,
+          "min": 1.0
+        },
+        "domains": {
+          "max": 1.0,
+          "min": 0.0
+        },
+        "phase_lock": {
+          "max": 1.0,
+          "min": 0.0
+        },
+        "shared_bias": {
+          "max": 1.0,
+          "min": 0.0
+        }
+      },
+      "mapping_mode": "linear",
+      "profile": "composite_all"
+    },
+    "measure_epochs": 4000,
+    "observables": {
+      "beta_junc": 1.5,
+      "compute_clustering": true,
+      "compute_hub_metrics": true,
+      "tick_definition": "v_clock_from_V"
+    },
+    "output": {
+      "out_dir": "outputs/quickcheck_full_v0_1_patch1",
+      "timeseries_bins": 100,
+      "write_timeseries": false
+    },
+    "scan": {
+      "n_values": [
+        0.0,
+        0.5,
+        1.0
+      ]
+    },
+    "schema_version": "vi_spacetime_config_v0.1",
+    "seeds": [
+      1
+    ],
+    "sizes": [
+      32
+    ],
+    "snapshots": {
+      "cadence": {
+        "every": 2500,
+        "start": 2500
+      },
+      "enabled": true,
+      "write_edges_csv": true,
+      "write_nodes_json": true
+    },
+    "steps_total": 5000,
+    "variant": "full"
+  },
+  "resolved_glue_params": {
+    "cadence_disorder": 0.0,
+    "domains": 1.0,
+    "phase_lock": 1.0,
+    "shared_bias": 1.0
+  },
+  "run_id": "quickcheck_full_v0_1_patch1__full__N32__n1.000__seed1",
+  "schema_version": "vi_spacetime_config_v0.1",
+  "seed": 1,
+  "variant": "full"
+}

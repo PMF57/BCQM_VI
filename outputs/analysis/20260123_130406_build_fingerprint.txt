@@ -1,0 +1,26 @@
+BCQM VI build fingerprint — Fri Jan 23 13:04:06 2026
+Working directory: /Users/pmf/Desktop
+Code directory: /Users/pmf/Desktop/bcqm_vi_spacetime
+
+== File hashes (sha256) ==
+engine_vglue.py: 4ed706e3edd7e5dd6dde1338abb5aa3ecd31a6e0825b90be3b6938ddff5a97f1
+event_graph.py: e6d853defe35b72d60d5c58e9328cb29cf739b4f24e706563775ed03a724c0c9
+runner.py: 751d25030103145acb0ae1002c5e4852345388e4e4739c49ffd1cade22ddce08
+cli.py: f9b058f500d59653ec04046861a928f5bfa9d094a9913cacfe6fd0933de77514
+analysis/sweetspot_check.py: dc55fb8ea5a729a9893406467b8d9659a32af3e9fc75ba465123e6a66af08c11
+analysis/pathA_summary.py: c8ee7403147e20ffd3e9209aef466789cf75f45d01a09ef69a5578bc3b9159a4
+analysis/scan_from_n_summary.py: 283949e822acc800cfd9f9097a4a92d6bdeb2bde916de2d338e3c57075dcddd4
+analysis/coupled_LS_batch_summary.py: 82ad5f30c711cb71ee6525da020496a757f01c05e8e341f2052f94548fc9d501
+analysis/geometry_scan_summary.py: bb49b4c4ea78464e042f7df35d791f865b5f9fc9bfd8f1506bbcf7c60bacafe2
+
+== Feature checks ==
+p_reuse_mode_support: OK (needle='p_reuse_mode')
+multi_wstar_logging: OK (needle='F_max_by_wstar')
+bundle_hist_by_wstar: OK (needle='bundle_hist_by_wstar')
+glueoff_hook: MISSING (needle='glue_decohere')
+q_base_override: MISSING (needle='q_base_override')
+geometry_hook_present: OK (needle='estimate_spectral_dimension')
+scan_from_n_script: OK (needle='scan_from_n_summary.py')
+
+== Import smoke test ==
+engine_vglue.py: import FAIL (ImportError: attempted relative import with no known parent package)

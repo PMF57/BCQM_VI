@@ -1,0 +1,11 @@
+BCQM VI Geometry probe (spectral dimension) — Fri 23 Jan 2026 12:34:17 GMT
+
+== RUN: configs/generated_vreg_C5_subset/geometry_probe_C5_W100_N4_n0p8.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/geometry_probe_C5_W100_N8_n0p8.yml ==
+
+== GEOMETRY SUMMARY: outputs_glue_axes/geometry_probe/W100 ==
+N=4 n=0.8 count=8 ds mean 0.983±0.33 median 1.04 [0.861,1.13]
+N=8 n=0.8 count=8 ds mean 1.32±0.33 median 1.23 [1.02,1.59]
+
+DONE. Wrote: outputs/analysis/20260123_123417_geometry_probe_W100.txt

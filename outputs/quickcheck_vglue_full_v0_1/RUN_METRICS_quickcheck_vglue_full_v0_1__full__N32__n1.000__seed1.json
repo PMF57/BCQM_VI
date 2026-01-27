@@ -1,0 +1,26 @@
+{
+  "L": 1.8224433647709288,
+  "L_inst": 0.8753125,
+  "N": 32,
+  "Q_clock": 10.309296492463622,
+  "S_junc_w": 0.0,
+  "S_perc": 0.0,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 1000,
+  "clustering": null,
+  "elapsed_seconds": 0.1484842300415039,
+  "ell_lock": 51.2251813388152,
+  "engine_mode": "v_glue",
+  "hubshare": 0.0,
+  "max_indegree": 0,
+  "measure_epochs": 4000,
+  "n": 1.0,
+  "run_id": "quickcheck_vglue_full_v0_1__full__N32__n1.000__seed1",
+  "seed": 1,
+  "steps_total": 5000,
+  "variant": "full"
+}

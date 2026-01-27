@@ -1,0 +1,72 @@
+{
+  "L": 0.09015388218446505,
+  "L_inst": 0.7638888888888888,
+  "N": 8,
+  "Q_clock": 0.2549936857717133,
+  "S_junc_w": 0.7651115740611849,
+  "S_perc": 0.8881118881118881,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 500,
+  "clustering": 0.002652396463471382,
+  "elapsed_seconds": 1.3571040630340576,
+  "ell_lock": 466.76796572032396,
+  "engine_mode": "v_glue",
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 1.1309628176353992,
+      "var": 2.6500796034768365e-31
+    },
+    "domains": {
+      "counts": {
+        "0": 8
+      },
+      "entropy": -1.000088900581841e-12
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.008130081300813009,
+  "islands": {
+    "F_max": 0.125,
+    "bundle_hist": {
+      "1": 8
+    },
+    "bundle_sizes": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "w_star": 0.3
+  },
+  "max_indegree": 5,
+  "measure_epochs": 4500,
+  "n": 0.0,
+  "run_id": "pathA_C5_W100_N8_p0p50_s56791_56798__full__N8__n0.000__seed56793",
+  "seed": 56793,
+  "space_state": {
+    "S_junc_w": 0.7651115740611849,
+    "S_perc": 0.8881118881118881,
+    "V_active_size": 429,
+    "allow_cocreate_merge": false,
+    "clustering": 0.002652396463471382,
+    "domain_match": true,
+    "enabled": true,
+    "hubshare": 0.008130081300813009,
+    "max_indegree": 5,
+    "p_reuse_policy": "fixed",
+    "p_reuse_value_last": 0.5
+  },
+  "steps_total": 5000,
+  "variant": "full"
+}

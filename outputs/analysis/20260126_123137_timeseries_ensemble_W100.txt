@@ -1,0 +1,15 @@
+BCQM VI timeseries ensemble (W=100, N=8; n={0.4,0.8}; 5 seeds) — Mon 26 Jan 2026 12:31:37 GMT
+
+== RUN: configs/generated_vreg_C5_subset/timeseries_ens_C5_W100_N8_n0p4_s56791_56795_spaceon.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/timeseries_ens_C5_W100_N8_n0p8_s56791_56795_spaceon.yml ==
+
+== SUMMARY ==
+Traceback (most recent call last):
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/analysis/timeseries_ensemble_summary.py", line 126, in <module>
+    main()
+    ~~~~^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/analysis/timeseries_ensemble_summary.py", line 93, in main
+    vals_F.append(float(sub.get("Fmax_0.20", np.nan)))
+                  ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: float() argument must be a string or a real number, not 'Series'

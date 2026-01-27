@@ -1,0 +1,48 @@
+{
+  "L": 0.524528355651845,
+  "L_inst": 0.7631111111111111,
+  "N": 4,
+  "Q_clock": 1.04905671130369,
+  "S_junc_w": 0.0,
+  "S_perc": 0.0,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 500,
+  "clustering": null,
+  "elapsed_seconds": 0.13567376136779785,
+  "ell_lock": 110.06843802547655,
+  "engine_mode": "v_glue",
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 0.9077214710004744,
+      "var": 6.471124613141112e-32
+    },
+    "domains": {
+      "counts": {
+        "0": 4
+      },
+      "entropy": -1.000088900581841e-12
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.0,
+  "islands": {
+    "enabled": false
+  },
+  "max_indegree": 0,
+  "measure_epochs": 4500,
+  "n": 0.6,
+  "run_id": "pathA_scan_C5_W100_N4_s56791_56798_nospace__full__N4__n0.600__seed56795",
+  "seed": 56795,
+  "space_state": {
+    "enabled": false
+  },
+  "steps_total": 5000,
+  "variant": "full"
+}

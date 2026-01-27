@@ -1,0 +1,4 @@
+BCQM VI SELFTEST — Fri Jan 23 13:57:00 2026
+
+== YAML VALIDATION FAILURES ==
+/Users/pmf/Desktop/configs/run_C5_phase_plus_cadence.yml: ConfigError: Missing required key: schema_version

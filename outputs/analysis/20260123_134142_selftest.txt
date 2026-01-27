@@ -1,0 +1,36 @@
+BCQM VI SELFTEST — Fri Jan 23 13:41:42 2026
+
+== RUN nospace: configs/selftests/selftest_vglue_nospace.yml ==
+
+== RUN space_on: configs/selftests/selftest_space_on.yml ==
+
+== RUN glueoff: configs/selftests/selftest_glueoff_space_on.yml ==
+
+== RUN geometry: configs/selftests/selftest_geometry.yml ==
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/cli.py", line 55, in <module>
+    main()
+    ~~~~^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/cli.py", line 36, in main
+    run_from_config(cfg)
+    ~~~~~~~~~~~~~~~^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/runner.py", line 317, in run_from_config
+    run_single(cfg, int(N), float(n), int(seed))
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/runner.py", line 94, in run_single
+    run_single_v_glue(cfg, N, n, seed)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/pmf/Desktop/bcqm_vi_spacetime/engine_vglue.py", line 491, in run_single_v_glue
+    geometry_out.update(g.estimate_spectral_dimension(
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        active_end,
+        ^^^^^^^^^^^
+    ...<4 lines>...
+        seed=int(seed) + 12345,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    ))
+    ^
+TypeError: EventGraph.estimate_spectral_dimension() got an unexpected keyword argument 't_max'
+

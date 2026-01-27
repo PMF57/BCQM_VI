@@ -1,0 +1,25 @@
+{
+  "L": 0.0,
+  "N": 64,
+  "Q_clock": 0.0,
+  "S_junc_w": 0.27542234785929337,
+  "S_perc": 0.6535576267333485,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "beta_junc": 1.5,
+  "burn_in_epochs": 8000,
+  "clustering": 0.0024096385542168677,
+  "elapsed_seconds": 406.2096767425537,
+  "ell_lock": 0,
+  "hubshare": 0.0005332622317024396,
+  "max_indegree": 8,
+  "measure_epochs": 12000,
+  "n": 0.0,
+  "run_id": "vi_full_phase1_coarse_v0_1__full__N64__n0.000__seed3",
+  "seed": 3,
+  "steps_total": 20000,
+  "variant": "full"
+}

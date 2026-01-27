@@ -1,0 +1,136 @@
+{
+  "L": 1.1728233438196833,
+  "L_inst": 0.7425,
+  "N": 8,
+  "Q_clock": 3.3172453581951196,
+  "S_junc_w": 5.5401870699007105,
+  "S_perc": 0.9820359281437125,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 400,
+  "clustering": 0.034274004141553814,
+  "elapsed_seconds": 0.25227904319763184,
+  "ell_lock": 34.711642886102794,
+  "engine_mode": "v_glue",
+  "geometry": {
+    "ball_growth": {
+      "comp_size": 164,
+      "mean_ball": [
+        1.0,
+        4.75,
+        10.325,
+        14.6,
+        19.775,
+        24.65,
+        28.9,
+        33.375,
+        37.85,
+        41.85,
+        47.025,
+        51.8,
+        56.875,
+        62.225,
+        66.625,
+        71.0,
+        75.65,
+        80.175,
+        85.325,
+        90.35,
+        95.325,
+        100.05,
+        105.05,
+        110.525,
+        115.5,
+        121.05,
+        126.975,
+        133.75,
+        141.8,
+        151.55,
+        163.15
+      ],
+      "r_max": 30,
+      "samples": 40
+    },
+    "comp_size": 164,
+    "enabled": true,
+    "mode": "ball_growth_only"
+  },
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 0.9717293545333603,
+      "var": 1.6023737137301802e-31
+    },
+    "domains": {
+      "counts": {
+        "0": 8
+      },
+      "entropy": -1.000088900581841e-12
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.019455252918287938,
+  "islands": {
+    "F_max": 0.125,
+    "F_max_by_wstar": {
+      "0.10": 1.0,
+      "0.20": 0.375,
+      "0.30": 0.125
+    },
+    "bundle_hist": {
+      "1": 8
+    },
+    "bundle_hist_by_wstar": {
+      "0.10": {
+        "8": 1
+      },
+      "0.20": {
+        "1": 3,
+        "2": 1,
+        "3": 1
+      },
+      "0.30": {
+        "1": 8
+      }
+    },
+    "bundle_sizes": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "w_star": 0.3
+  },
+  "max_indegree": 10,
+  "measure_epochs": 1600,
+  "n": 0.8,
+  "run_id": "ball_growth_ens_C5_W100_N8_n0p8_s56791_56795__full__N8__n0.800__seed56795",
+  "seed": 56795,
+  "space_state": {
+    "S_junc_w": 5.5401870699007105,
+    "S_perc": 0.9820359281437125,
+    "V_active_size": 167,
+    "allow_cocreate_merge": false,
+    "clustering": 0.034274004141553814,
+    "domain_match": true,
+    "enabled": true,
+    "hubshare": 0.019455252918287938,
+    "max_indegree": 10,
+    "p_reuse_policy": "from_n",
+    "p_reuse_value_last": 0.8
+  },
+  "steps_total": 2000,
+  "timeseries": {
+    "enabled": false
+  },
+  "variant": "full"
+}

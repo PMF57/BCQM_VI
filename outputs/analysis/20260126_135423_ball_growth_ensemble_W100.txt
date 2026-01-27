@@ -1,0 +1,14 @@
+BCQM VI ball-growth ensemble (W=100; N={4,8}; n={0.4,0.8}; 5 seeds) — Mon 26 Jan 2026 13:54:23 GMT
+
+== RUN: configs/generated_vreg_C5_subset/ball_growth_ens_C5_W100_N8_n0p4.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/ball_growth_ens_C5_W100_N8_n0p8.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/ball_growth_ens_C5_W100_N4_n0p4.yml ==
+
+== RUN: configs/generated_vreg_C5_subset/ball_growth_ens_C5_W100_N4_n0p8.yml ==
+
+== SUMMARY ==
+Wrote outputs/ball_growth_ensemble/*.csv and figs/fig_ball_growth_frac_ensemble_W100_N*.pdf
+
+DONE. Wrote: outputs/analysis/20260126_135423_ball_growth_ensemble_W100.txt

@@ -1,0 +1,44 @@
+{
+  "L": 0.4305480803122299,
+  "L_inst": 0.67,
+  "N": 4,
+  "Q_clock": 0.8610961606244598,
+  "S_junc_w": 0.0,
+  "S_perc": 0.0,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 500,
+  "clustering": null,
+  "elapsed_seconds": 0.3141822814941406,
+  "ell_lock": 72.47914063269488,
+  "engine_mode": "v_glue",
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 1.057382001735302,
+      "var": 1.232595164407831e-31
+    },
+    "domains": {
+      "counts": {
+        "0": 2,
+        "1": 1,
+        "2": 1
+      },
+      "entropy": 1.039720770836918
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.0,
+  "max_indegree": 0,
+  "measure_epochs": 4500,
+  "n": 0.0,
+  "run_id": "vreg_C9_W50_N2N4N6N8_s90123_90138_vglue__full__N4__n0.000__seed90136",
+  "seed": 90136,
+  "steps_total": 5000,
+  "variant": "full"
+}

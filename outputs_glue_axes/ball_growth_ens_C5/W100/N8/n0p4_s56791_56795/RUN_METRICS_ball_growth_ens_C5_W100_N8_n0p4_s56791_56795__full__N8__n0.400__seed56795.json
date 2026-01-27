@@ -1,0 +1,134 @@
+{
+  "L": 0.39874913021943503,
+  "L_inst": 0.7284375,
+  "N": 8,
+  "Q_clock": 1.1278328558816009,
+  "S_junc_w": 0.5327037378866246,
+  "S_perc": 0.8942115768463074,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 400,
+  "clustering": 0.003144654088050314,
+  "elapsed_seconds": 0.37201595306396484,
+  "ell_lock": 85.9858111890506,
+  "engine_mode": "v_glue",
+  "geometry": {
+    "ball_growth": {
+      "comp_size": 448,
+      "mean_ball": [
+        1.0,
+        3.35,
+        6.625,
+        10.725,
+        14.675,
+        18.8,
+        22.925,
+        27.25,
+        31.65,
+        36.7,
+        42.375,
+        48.925,
+        55.95,
+        64.05,
+        72.35,
+        80.825,
+        89.55,
+        99.3,
+        108.825,
+        119.275,
+        129.675,
+        142.4,
+        155.45,
+        170.35,
+        186.45,
+        204.8,
+        226.1,
+        251.925,
+        283.225,
+        323.5,
+        376.25
+      ],
+      "r_max": 30,
+      "samples": 40
+    },
+    "comp_size": 448,
+    "enabled": true,
+    "mode": "ball_growth_only"
+  },
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 0.9717293545333598,
+      "var": 5.115269932292498e-31
+    },
+    "domains": {
+      "counts": {
+        "0": 8
+      },
+      "entropy": -1.000088900581841e-12
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.006042296072507553,
+  "islands": {
+    "F_max": 0.125,
+    "F_max_by_wstar": {
+      "0.10": 0.125,
+      "0.20": 0.125,
+      "0.30": 0.125
+    },
+    "bundle_hist": {
+      "1": 8
+    },
+    "bundle_hist_by_wstar": {
+      "0.10": {
+        "1": 8
+      },
+      "0.20": {
+        "1": 8
+      },
+      "0.30": {
+        "1": 8
+      }
+    },
+    "bundle_sizes": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "w_star": 0.3
+  },
+  "max_indegree": 4,
+  "measure_epochs": 1600,
+  "n": 0.4,
+  "run_id": "ball_growth_ens_C5_W100_N8_n0p4_s56791_56795__full__N8__n0.400__seed56795",
+  "seed": 56795,
+  "space_state": {
+    "S_junc_w": 0.5327037378866246,
+    "S_perc": 0.8942115768463074,
+    "V_active_size": 501,
+    "allow_cocreate_merge": false,
+    "clustering": 0.003144654088050314,
+    "domain_match": true,
+    "enabled": true,
+    "hubshare": 0.006042296072507553,
+    "max_indegree": 4,
+    "p_reuse_policy": "from_n",
+    "p_reuse_value_last": 0.4
+  },
+  "steps_total": 2000,
+  "timeseries": {
+    "enabled": false
+  },
+  "variant": "full"
+}

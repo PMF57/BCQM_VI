@@ -1,0 +1,127 @@
+{
+  "L": 0.3011758599460799,
+  "L_inst": 0.7971875,
+  "N": 4,
+  "Q_clock": 0.6023517198921599,
+  "S_junc_w": 5.3199980088446654,
+  "S_perc": 0.975609756097561,
+  "anomaly_flags": {
+    "runaway_hubbing": false,
+    "star_collapse": false,
+    "tierB_evaluated": false
+  },
+  "burn_in_epochs": 400,
+  "clustering": 0.07548958977530407,
+  "elapsed_seconds": 0.14020299911499023,
+  "ell_lock": 76.08263691914257,
+  "engine_mode": "v_glue",
+  "geometry": {
+    "ball_growth": {
+      "comp_size": 80,
+      "mean_ball": [
+        1.0,
+        5.025,
+        9.95,
+        15.85,
+        21.975,
+        28.575,
+        35.375,
+        41.975,
+        46.875,
+        51.025,
+        55.3,
+        59.7,
+        64.025,
+        67.775,
+        70.625,
+        73.55,
+        76.125,
+        78.025,
+        78.925,
+        79.4,
+        79.6,
+        79.8,
+        79.9,
+        79.975,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0
+      ],
+      "r_max": 30,
+      "samples": 40
+    },
+    "comp_size": 80,
+    "enabled": true,
+    "mode": "ball_growth_only"
+  },
+  "glue_state": {
+    "cadence": {
+      "field": "T",
+      "mean": 0.9077214710004742,
+      "var": 1.6023737137301802e-31
+    },
+    "domains": {
+      "counts": {
+        "0": 4
+      },
+      "entropy": -1.000088900581841e-12
+    },
+    "phase": {
+      "R": 1.0
+    }
+  },
+  "hubshare": 0.036290322580645164,
+  "islands": {
+    "F_max": 1.0,
+    "F_max_by_wstar": {
+      "0.10": 1.0,
+      "0.20": 1.0,
+      "0.30": 1.0
+    },
+    "bundle_hist": {
+      "4": 1
+    },
+    "bundle_hist_by_wstar": {
+      "0.10": {
+        "4": 1
+      },
+      "0.20": {
+        "4": 1
+      },
+      "0.30": {
+        "4": 1
+      }
+    },
+    "bundle_sizes": [
+      4
+    ],
+    "w_star": 0.3
+  },
+  "max_indegree": 9,
+  "measure_epochs": 1600,
+  "n": 0.8,
+  "run_id": "ball_growth_ens_C5_W100_N4_n0p8_s56791_56795__full__N4__n0.800__seed56795",
+  "seed": 56795,
+  "space_state": {
+    "S_junc_w": 5.3199980088446654,
+    "S_perc": 0.975609756097561,
+    "V_active_size": 82,
+    "allow_cocreate_merge": false,
+    "clustering": 0.07548958977530407,
+    "domain_match": true,
+    "enabled": true,
+    "hubshare": 0.036290322580645164,
+    "max_indegree": 9,
+    "p_reuse_policy": "from_n",
+    "p_reuse_value_last": 0.8
+  },
+  "steps_total": 2000,
+  "timeseries": {
+    "enabled": false
+  },
+  "variant": "full"
+}

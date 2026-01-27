@@ -1,0 +1,23 @@
+BCQM VI SELFTEST — Fri Jan 23 13:47:14 2026
+
+== RUN nospace: configs/selftests/selftest_vglue_nospace.yml ==
+
+== RUN space_on: configs/selftests/selftest_space_on.yml ==
+
+== RUN glueoff: configs/selftests/selftest_glueoff_space_on.yml ==
+
+== RUN geometry: configs/selftests/selftest_geometry.yml ==
+
+OK: nospace outputs exist
+OK: nospace engine_mode=v_glue
+OK: nospace space_state.enabled=false
+OK: space_on outputs exist
+OK: space_on space_state.enabled=true
+OK: space_on islands multi-wstar present
+OK: glueoff outputs exist
+OK: glueoff space_state.enabled=true
+OK: glueoff ablation recorded in RUN_CONFIG
+OK: geometry outputs exist
+OK: geometry block present in RUN_METRICS
+
+SELFTEST PASSED
