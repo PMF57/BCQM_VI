@@ -4,7 +4,7 @@ This repository contains the reference implementation and configuration files fo
 
 ## Links
 - GitHub repository: https://github.com/PMF57/BCQM_VI
-- Zenodo concept DOI (reserved): 10.5281/zenodo.18400713
+- Zenodo (v0.1.0): 10.5281/zenodo.18403110
 
 ## Release / reproducibility
 The release tag intended for archival is:
