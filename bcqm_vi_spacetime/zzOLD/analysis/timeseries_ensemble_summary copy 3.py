@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-timeseries_ensemble_summary_N4.py (v0.1.1)
+timeseries_ensemble_summary.py (v0.1.3)
 
-N=4 companion to the N=8 ensemble summary.
-Locks colours to Fig. 2 base (S_perc=C0, F_max(w=0.20)=C4) and uses Fig. 3c / Fig. 3d titles.
+Updates:
+- Locks colours to Fig. 2 base: S_perc = C0, F_max(w=0.20) = C4
+- Uses Fig. 4a / Fig. 4b titles (n=0.4 and n=0.8)
 
-Run from Desktop:
-  python3 bcqm_vi_spacetime/analysis/timeseries_ensemble_summary_N4.py
+Other behaviour unchanged.
 """
 from __future__ import annotations
+
 import json
 from pathlib import Path
 from glob import glob
@@ -17,13 +18,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 W = 100
-N = 4
-
+N = 8
 ROOTS = [
-    ("n0p4", "n=0.4", "outputs_glue_axes/timeseries_ens_C5/W100/N4/n0p4_s56791_56795/spaceon", "Fig. 3c"),
-    ("n0p8", "n=0.8", "outputs_glue_axes/timeseries_ens_C5/W100/N4/n0p8_s56791_56795/spaceon", "Fig. 3d"),
+    ("n0p4", "n=0.4", "outputs_glue_axes/timeseries_ens_C5/W100/N8/n0p4_s56791_56795/spaceon", "Fig. 3"),
+    ("n0p8", "n=0.8", "outputs_glue_axes/timeseries_ens_C5/W100/N8/n0p8_s56791_56795/spaceon", "Fig. 3b"),
 ]
 
+# Colour lock to Fig. 2 base
 C_S = "C0"  # S_perc
 C_F = "C4"  # F_max(w=0.20)
 
@@ -61,9 +62,10 @@ def plot_band(ax, t, med, q1, q3, label, color):
     ax.plot(t, med, label=label, color=color)
     ax.fill_between(t, q1, q3, alpha=0.25, color=color)
 
+
 def main():
     out_csv_dir = Path("outputs") / "timeseries_ensemble"
-    out_fig_dir = Path("figures")
+    out_fig_dir = Path("figs")
     out_csv_dir.mkdir(parents=True, exist_ok=True)
     out_fig_dir.mkdir(parents=True, exist_ok=True)
 
@@ -105,15 +107,15 @@ def main():
         ax = plt.gca()
         plot_band(ax, out["t"], out["S_perc_med"], out["S_perc_q1"], out["S_perc_q3"], "S_perc(t) median±IQR", C_S)
         plot_band(ax, out["t"], out["Fmax020_med"], out["Fmax020_q1"], out["Fmax020_q3"], "F_max(w=0.20) median±IQR", C_F)
-        ax.set_title(f"Space vs islands (ensemble) ({nlabel}, W={W}, N={N})")
+
+        ax.set_title(f"{figlabel}  Space vs islands (ensemble) ({nlabel}, W={W}, N={N})")
         ax.set_xlabel("Tick t (binned)")
         ax.set_ylabel("Order parameter (0–1)")
         ax.set_ylim(-0.02, 1.05)
         style_axes(ax)
         ax.legend(frameon=False, fontsize=9)
         plt.tight_layout()
-        fname = "fig_3c_space_vs_islands_ensemble_n0p4_W100_N4.pdf" if tag=="n0p4" else "fig_3d_space_vs_islands_ensemble_n0p8_W100_N4.pdf"
-        plt.savefig(out_fig_dir / fname, format="pdf")
+        plt.savefig(out_fig_dir / f"fig_{tag}_space_vs_islands_ensemble_W{W}_N{N}.pdf", format="pdf")
         plt.close()
 
     print("Wrote CSVs to outputs/timeseries_ensemble and figures to figs/")

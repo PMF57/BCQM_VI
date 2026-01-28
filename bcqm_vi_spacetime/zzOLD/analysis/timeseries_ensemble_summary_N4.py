@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-timeseries_ensemble_summary_N4.py (v0.1.1)
+timeseries_ensemble_summary_N4.py (v0.1)
 
 N=4 companion to the N=8 ensemble summary.
 Locks colours to Fig. 2 base (S_perc=C0, F_max(w=0.20)=C4) and uses Fig. 3c / Fig. 3d titles.
@@ -63,7 +63,7 @@ def plot_band(ax, t, med, q1, q3, label, color):
 
 def main():
     out_csv_dir = Path("outputs") / "timeseries_ensemble"
-    out_fig_dir = Path("figures")
+    out_fig_dir = Path("figs")
     out_csv_dir.mkdir(parents=True, exist_ok=True)
     out_fig_dir.mkdir(parents=True, exist_ok=True)
 
@@ -105,15 +105,14 @@ def main():
         ax = plt.gca()
         plot_band(ax, out["t"], out["S_perc_med"], out["S_perc_q1"], out["S_perc_q3"], "S_perc(t) median±IQR", C_S)
         plot_band(ax, out["t"], out["Fmax020_med"], out["Fmax020_q1"], out["Fmax020_q3"], "F_max(w=0.20) median±IQR", C_F)
-        ax.set_title(f"Space vs islands (ensemble) ({nlabel}, W={W}, N={N})")
+        ax.set_title(f"{figlabel}  Space vs islands (ensemble) ({nlabel}, W={W}, N={N})")
         ax.set_xlabel("Tick t (binned)")
         ax.set_ylabel("Order parameter (0–1)")
         ax.set_ylim(-0.02, 1.05)
         style_axes(ax)
         ax.legend(frameon=False, fontsize=9)
         plt.tight_layout()
-        fname = "fig_3c_space_vs_islands_ensemble_n0p4_W100_N4.pdf" if tag=="n0p4" else "fig_3d_space_vs_islands_ensemble_n0p8_W100_N4.pdf"
-        plt.savefig(out_fig_dir / fname, format="pdf")
+        plt.savefig(out_fig_dir / f"fig_{tag}_space_vs_islands_ensemble_W{W}_N{N}.pdf", format="pdf")
         plt.close()
 
     print("Wrote CSVs to outputs/timeseries_ensemble and figures to figs/")

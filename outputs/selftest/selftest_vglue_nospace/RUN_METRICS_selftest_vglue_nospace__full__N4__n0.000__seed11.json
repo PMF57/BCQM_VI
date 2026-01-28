@@ -12,7 +12,7 @@
   },
   "burn_in_epochs": 100,
   "clustering": null,
-  "elapsed_seconds": 0.015330076217651367,
+  "elapsed_seconds": 0.015933752059936523,
   "ell_lock": 20.165556671511574,
   "engine_mode": "v_glue",
   "geometry": {
@@ -47,5 +47,8 @@
     "enabled": false
   },
   "steps_total": 600,
+  "timeseries": {
+    "enabled": false
+  },
   "variant": "full"
 }

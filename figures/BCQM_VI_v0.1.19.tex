@@ -1,0 +1,333 @@
+\documentclass[11pt,a4paper]{article}
+
+% =========================================================
+% Encoding, fonts, language
+% =========================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[british]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{csquotes}
+
+% =========================================================
+% Page layout
+% =========================================================
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{parskip} % paragraph spacing without indents
+
+% =========================================================
+% Mathematics and symbols
+% =========================================================
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+
+% --- Theorem-style environments (if needed) -------------------------
+\newtheorem{remark}{Remark}
+
+% =========================================================
+% Figures and graphics
+% =========================================================
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\graphicspath{{figures/}{./}}
+
+% =========================================================
+% Hyperlinks and clever references
+% =========================================================
+\usepackage{xurl}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue,
+  pdftitle={Boundary-Condition Quantum Mechanics VI --- Emergent (1+1)-Dimensional Spacetime Islands from Cross-Linked Bundles},
+  pdfauthor={Peter M. Ferguson}
+}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+% =========================================================
+% Appendices
+% =========================================================
+\usepackage[title,page]{appendix}
+
+% =========================================================
+% Bibliography (biblatex + biber, numeric style)
+% =========================================================
+\usepackage[backend=biber,style=numeric,sorting=none,doi=true,url=true]{biblatex}
+% Replace 'bcqm_master_refs.bib' with the name of your .bib file if needed.
+\addbibresource{bcqm_master_refs.bib}
+
+% =========================================================
+% BCQM macros (shared across BCQM papers)
+% =========================================================
+% Adjust the path if you keep macros in a subfolder.
+\input{bcqm_macros_v6}
+
+% =========================================================
+% Document metadata
+% =========================================================
+\title{Boundary-Condition Quantum Mechanics VI:\\[0.5ex]
+\textnormal{Emergent (1+1)-Dimensional Spacetime Islands from Cross-Linked Bundles}}
+\author{Peter M.~Ferguson \\ \textit{Independent Researcher}}
+\date{27 January 2026}
+
+% =========================================================
+% Document starts here
+% =========================================================
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We report Stage--1 results of the BCQM VI ``spacetime'' programme using a Path~A cross-link layer on top of the BCQM~V \cite{ferguson_bcqm_v_2025} \emph{v\_glue} clock engine. The model remains pre-spacetime at the primitive level (events and directed connections only), but admits operational order parameters for (i) temporal coherence (clock quality) and (ii) spatial connectivity (percolation and junctioning on the active event graph). We establish a robust \emph{two-step emergence} in which connectivity rises at low cross-link pressure while island coherence appears later, and we confirm mechanism separation by ablations: connectivity can percolate while clock coherence collapses (glue-off), and the scan parameter does not leak into the clock engine when cross-links are disabled (nospace). We then show that spacetime islands are dynamically intermittent at intermediate overlap thresholds by measuring binned time series and ensemble median$\pm$IQR bands. Finally, we diagnose the active-slice geometry using ball growth on the largest component, finding an n-dependent tightening consistent with locally sparse channels and globally increasing shortcuts, while return-probability spectral-dimension fits are structurally unstable on finite, rapidly mixing active slices.
+\end{abstract}
+
+\section{Scope and positioning}
+This paper intentionally assumes the BCQM I--V foundations and the BCQM V \emph{v\_glue} mechanism as given, and focuses on the Stage--1 empirical question: \emph{what emerges, in what order, and by what mechanism, when a cross-link (Path A) layer is enabled on top of v\_glue bundles?} The emphasis is on reproducible diagnostics rather than on a final manifold-level metric.
+
+\noindent\textbf{Relation to BCQM V.} BCQM V established that coherent bundles can yield an emergent cadence/clock observable (\(Q_{\mathrm{clock}}\)) under the v\_glue mechanism. BCQM VI extends this by enabling a spatial cross-link layer (Path~A) on top of the BCQM V clock, and by measuring island dynamics and geometry diagnostics on the resulting event graph.
+
+Accordingly, the paper is written as a methods-focused report on an emergent-spacetime scaffold: events and directed connections are the primitives; v\_glue supplies a time/clock coherence module; and Path~A supplies cross-links that produce a measurable connectivity substrate and island dynamics. The primary goals are to validate the operational proxies, map qualitative regimes, and prove mechanism separation via targeted ablations, rather than to assert a final manifold-level geometry.
+
+
+\noindent\textbf{Stage--2 target (``cloth'').} Stage--2 will define a persistent background geometry object (the ``cloth'') beyond the short active slice, so that metric and dimension tests can be posed on a stable substrate.
+\section{Model summary}
+\subsection{Primitives}
+The primitive ontology is a directed event graph: featureless events and directed connections. The simulation constructs a time-ordered sequence of realised events as primitive threads advance, with cross-links realised via event reuse inside an operational active window \(V_{\mathrm{active}}(t)\).
+
+\subsection{Temporal coherence: the v\_glue clock}
+Temporal order is operationalised via the BCQM V \emph{v\_glue} engine, which produces a clock-quality observable \(Q_{\mathrm{clock}}\) (and related diagnostics). In this paper, ``time'' refers to this operational clock coherence, not to an assumed background coordinate.
+
+\subsection{Spatial connectivity: Path A cross-links}
+Path A introduces spatial connectivity by permitting co-selection (reuse) of events from \(V_{\mathrm{active}}(t)\). Operationally, on each thread advance, with probability \(p_{\mathrm{reuse}}\) the next event is chosen from \(V_{\mathrm{active}}(t)\) (subject to a lightweight selection policy, e.g. recency-weighting and optional anti-hub bias), and with complementary probability a fresh event is created. This reuse creates additional undirected adjacency on the active graph slice and provides the cross-links that drive percolation and overlap-bundle islands. Connectivity is measured on the undirected projection of the active directed graph via:
+\begin{itemize}
+\item \(S_{\mathrm{perc}}(t)\): the fraction of \(V_{\mathrm{active}}(t)\) in the largest connected component;
+\item \(S_{\mathrm{junc}}^{\mathrm{w}}(t)\): a weighted junction density (indegree-sensitive).
+\end{itemize}
+See Appendix (Figures) for a schematic topology contrast between the \emph{nospace} and \emph{space-on} cases.
+
+
+\subsection{Islands and threshold sensitivity}
+Island coherence is measured via overlap bundles computed from per-thread histories, reported as \(F_{\max}(w_\star)\) at multiple thresholds \(w_\star\in\{0.10,0.20,0.30\}\). This multi-threshold reporting is necessary: a single fixed \(w_\star\) is not scale-free across \(N\).
+
+\subsection{Ball-growth geometry}
+To characterise structure on the active graph slice without assuming a manifold, we use ball growth on the largest component \(C\subset V_{\mathrm{active}}\): the median\(\pm\)IQR of \(|B(r)|/|C|\) versus graph radius \(r\). This is robust even when return-probability spectral-dimension fits fail.
+
+
+\subsection{Glossary of terms}
+For readability, we summarise the terms used in a BCQM-specific sense:
+\begin{description}[leftmargin=!,labelwidth=4.2cm]
+\item[Event] Primitive node in the directed event graph; featureless except for its directed connections.
+\item[Thread] Primitive trajectory that advances stepwise by creating new events or reusing existing events; bundles are aggregates of threads.
+\item[v\_glue] The BCQM V clock/coherence engine used here as the temporal mechanism; it produces the operational clock observable \(Q_{\mathrm{clock}}\) (and related diagnostics such as \(L\) and \(\ell_{\mathrm{lock}}\)).
+\item[Path A] The cross-link rule that implements event reuse from \(V_{\mathrm{active}}(t)\) with probability \(p_{\mathrm{reuse}}\), generating additional adjacency and driving connectivity and islands.
+\item[\(V_{\mathrm{active}}(t)\)] Active window of events (e.g. the last \(W_{\mathrm{coh}}\) ticks, plus frontiers) considered for reuse and for connectivity measurements.
+\item[\(S_{\mathrm{perc}}\)] Fraction of \(V_{\mathrm{active}}(t)\) in the largest connected component (percolation proxy for ``space on'').
+\item[\(S_{\mathrm{junc}}^{\mathrm{w}}\)] Weighted junction density (indegree-sensitive measure of ``junction richness'').
+\item[\(F_{\max}(w_\star)\)] Largest overlap-bundle fraction at threshold \(w_\star\) (island coherence proxy). We report multiple thresholds \(w_\star\in\{0.10,0.20,0.30\}\) to avoid scale artefacts.
+\item[nospace / space-on / glue-off] The three ablation conditions: cross-links disabled; cross-links enabled; cross-links enabled while glue coherence is disabled.
+\item[Ball growth] Geometry proxy on the active slice: fraction of the largest component reached within graph radius \(r\), reported as \(|B(r)|/|C|\) where \(C\) is the largest connected component of \(V_{\mathrm{active}}(t)\).
+\end{description}
+
+
+\section{Methods}
+\subsection{Simulation parameters and ensembles}
+Unless otherwise stated, the reported runs use:
+\begin{itemize}
+\item bundle sizes \(N\in\{4,8\}\);
+\item coherence horizons \(W_{\mathrm{coh}}\in\{50,100\}\);
+\item scan grid \(n\in\{0,0.2,0.4,0.6,0.8\}\) via \(p_{\mathrm{reuse}}:=n\);
+\item run length set by the configuration (typical: \texttt{steps\_total}=10000 with \texttt{burn\_in}=5000);
+\item scan ensembles typically use 8 seeds (e.g.\ 56791--56798); time-series ensembles use 5 seeds (e.g.\ 56791--56795); and a pilot time-series seed (56796) is used for illustrative figures.
+\end{itemize}
+These values are part of the executable YAML configs and are written verbatim into \path{RUN_CONFIG_*.json} for every run.
+
+\subsection{Logged outputs and workflow}
+Runs write a paired \path{RUN_CONFIG_*.json} and \path{RUN_METRICS_*.json}. The reported figures are generated from these files and from derived CSV summaries produced by the analysis scripts. Bulk intermediate artefacts (e.g.\ SNAPSHOT dumps) are intentionally treated as disposable and are not required to reproduce Stage--1 results.
+
+\subsection{Cross-link pressure as the control knob}
+We scan a dimensionless cross-link pressure parameter $n\in[0,1]$ by setting $p_{\mathrm{reuse}}:=n$ (``scan-from-n'').
+
+\noindent\textbf{Physical intuition.} Although $n$ is implemented as a reuse probability, it functions like a cross-link density/``pressure'': increasing $n$ short-circuits otherwise separate thread trajectories by creating more shortcuts and junctions on the active graph, thereby tightening ball growth ($|B(r)|/|C|$ rises faster with $r$) and reducing the effective diameter. In Stage--1 we use the discrete grid $n\in\{0,0.2,0.4,0.6,0.8\}$ to resolve (i) the connectivity onset and (ii) the later island-coherence onset without making the bring-up stage prohibitively expensive. Unless stated otherwise, results are reported for $W_{\mathrm{coh}}\in\{50,100\}$ and $N\in\{4,8\}$, with ensemble statistics over multiple random seeds.
+\subsection{Ablations that separate clock and space mechanisms}
+Three conditions are used repeatedly:
+\begin{itemize}
+\item \textbf{nospace}: cross-link layer disabled;
+\item \textbf{space-on}: Path A enabled with \(p_{\mathrm{reuse}}:=n\);
+\item \textbf{glue-off}: Path A enabled while glue coherence is disabled (phase/cadence couplings off; shared-bias and domains disabled; hop noise increased via \(q_{\mathrm{base}}\) override, typically \(q_{\mathrm{base}}=0.45\)), to test whether connectivity can emerge without a good clock.
+\end{itemize}
+
+\subsection{Time-series pipeline for dynamic islands}
+For dynamic-islands evidence we enable binned time series during runs. The measurement window is divided into a fixed number of bins (typical: 80); the per-bin sampling interval is chosen automatically from the measurement duration. Each record includes $S_{\mathrm{perc}}(t)$, $S_{\mathrm{junc}}^{\mathrm{w}}(t)$, $|V_{\mathrm{active}}|(t)$, $|C|(t)$, and $F_{\max}(w_\star)(t)$ for $w_\star\in\{0.10,0.20,0.30\}$. Ensemble plots report median$\pm$IQR across seeds. When useful, simple duty-cycle summaries (e.g. the fraction of bins with $S_{\mathrm{perc}}(t)$ above a chosen threshold) help distinguish persistent connectivity from intermittent coherence.
+
+\subsection{Ball-growth as a robust geometry probe}
+Ball growth is computed on the largest connected component $C\subset V_{\mathrm{active}}$ at the measurement endpoint (or equivalently on the last active slice). For each run we sample multiple roots in $C$ and compute the mean ball volume $|B(r)|$ as a function of graph radius $r$. Ensemble results are reported as median$\pm$IQR of the fraction covered $|B(r)|/|C|$ versus $r$ (typically $r\le 30$). For compact summaries we use the radii $r_{50}$ and $r_{90}$ at which the median curve first exceeds 50\% and 90\% coverage.
+
+\section{Bring-up: validating the spacetime scaffold}
+This workstream treated BCQM VI as a scaffold-building exercise. Before interpreting any ``spacetime'' behaviour, we established that (i) the code executes reliably, (ii) the v\_glue clock metrics reproduce BCQM V behaviour in the relevant parameter slices, and (iii) Path A cross-links do not introduce hidden orientation bias.
+
+\subsection{Quickchecks: stability and symmetry of the event graph}
+Initial quickchecks validated symmetry (no unintended drift) and stability (no blow-ups) under neutral baselines. A non-monotone ``dip'' regime was observed in early exploratory scans (typically around n$\approx$0.4--0.6), emphasising the need for ensemble statistics and for not over-interpreting single trajectories.
+
+\subsection{Time series reveal ``space on, islands fluctuating''}
+Time-series logging was added to capture the ``machine-gun'' view: the event substrate remains connected while island coherence at intermediate threshold fluctuates. The pilot run (Fig.\ \ref{fig:pilot}) served as a smoke test for the time-series pipeline; ensemble runs (Figs.\ \ref{fig:ensN8}--\ref{fig:ensN4}) locked the phenomenon as reproducible.
+
+\subsection{Code confidence and provenance guarantees}
+A selftest suite and a build-fingerprint script were added to support confidence and reproducibility. The selftest validates all VI YAMLs under \texttt{configs/} (skipping non-VI provenance configs) and exercises the key runtime paths (nospace, space-on, glue-off, and the geometry hook). Build fingerprints record SHA256 hashes of core modules for provenance.
+
+\section{Parity with BCQM V: clock continuity under Path A}
+BCQM VI reuses the BCQM V v\_glue engine as the temporal coherence module. Parity runs (e.g.\ C5/C9) and ``sweet-spot'' heuristics were used as regression checks across \(W_{\mathrm{coh}}\) and \(N\). This matters because Stage--1 claims rely on the modularity of the construction: Path A adds spatial cross-links and island bookkeeping without altering the underlying clock engine.
+
+Two points were established:
+\begin{itemize}
+\item v\_glue clock metrics remain stable under Path A activation (space-on), and can be selectively destroyed in glue-off without preventing connectivity.
+\item The observed N dependence of strict-threshold island coherence (\(w_\star=0.30\)) is consistent with finite-size/threshold effects rather than a coding artefact, as it appears across replicated horizons and ensembles.
+\end{itemize}
+
+
+\section{Results}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{p{0.28\linewidth} p{0.66\linewidth}}
+\hline
+Finding & Evidence in this paper \\
+\hline
+Two-step emergence (space then islands) & Scan-from-n: $S_{\mathrm{perc}}$ rises by low $n$ while $F_{\max}(w_\star)$ rises only at larger $n$; holds for $W_{\mathrm{coh}}\in\{50,100\}$ and $N\in\{4,8\}$. \\
+Mechanism separation & Ablations: nospace $\Rightarrow S_{\mathrm{perc}}=0$ and $Q_{\mathrm{clock}}$ independent of $n$; glue-off $\Rightarrow S_{\mathrm{perc}}$ rises while $Q_{\mathrm{clock}}\sim \mathcal{O}(10^{-2})$. \\
+Dynamic islands & Binned time series + ensembles (median$\pm$IQR): $S_{\mathrm{perc}}(t)$ stable while $F_{\max}(w_\star=0.20)(t)$ fluctuates; confirmed for $N=8$ and $N=4$ at $n=0.4$ and $n=0.8$. \\
+Ball-growth geometry & Ensemble ball-growth curves $|B(r)|/|C|$ show strong tightening from $n=0.4$ to $n=0.8$ (shortcut-rich connectivity) for $N=8$ and $N=4$. \\
+\hline
+\end{tabular}
+\caption{Stage--1 headline results and where they appear in the paper.}
+\label{tab:headline}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{cccc}
+\hline
+Case (W=100) & $S_{\mathrm{perc}}$ (median) & $F_{\max}(w_\star=0.20)$ (median) & $Q_{\mathrm{clock}}$ (median) \\
+\hline
+$N=4,\;n=0.2$ & 0.826 & 0.25 & 0.902 \\
+$N=4,\;n=0.8$ & 0.979 & 1.00 & 0.997 \\
+$N=8,\;n=0.2$ & 0.879 & 0.125 & 1.01 \\
+$N=8,\;n=0.8$ & 0.962 & 0.562 & 0.938 \\
+\hline
+\end{tabular}
+\caption{Representative scan-from-n medians (8 seeds) illustrating the two-step emergence: connectivity rises early while island coherence at intermediate threshold strengthens at larger n. Values shown are for the W=100 scans; multi-threshold reporting is used throughout (w$_\star$ in \{0.10,0.20,0.30\}).}
+\label{tab:repmedians}
+\end{table}
+
+
+\subsection{Two-step emergence: space first, islands later}
+\subsubsection{Early connectivity onset at low cross-link pressure}
+In scan-from-n runs, connectivity (as measured by \(S_{\mathrm{perc}}\) and \(S_{\mathrm{junc}}^{\mathrm{w}}\)) rises sharply from the disconnected baseline as n increases through the low-to-mid range (typically by n$\approx$0.2--0.4). During this phase, island coherence remains near its fragmented baseline at strict thresholds.
+
+\subsubsection{Island coherence only at higher cross-link pressure}
+At larger n (typically n$\approx$0.6--0.8), island coherence emerges on top of an already-percolated substrate. The onset is threshold-sensitive: \(F_{\max}(w_\star=0.10)\) can saturate while \(F_{\max}(w_\star=0.30)\) remains fragmented, particularly at larger \(N\).
+In particular, strict-threshold coherence at \(w_\star=0.30\) is harder to achieve at \(N=8\) than at \(N=4\) in otherwise matched scans.
+
+\subsubsection{Emergence order robust across coherence horizons}
+This two-step ordering persists across \(W_{\mathrm{coh}}\in\{50,100\}\), indicating a robust emergence sequence within the present scaffold.
+
+
+\subsection{Mechanism separation: space can emerge without a clock}
+The glue-off ablation demonstrates that space/connectivity can percolate while \(Q_{\mathrm{clock}}\) collapses, confirming that the connectivity transition is driven by cross-links rather than by leakage of the scan parameter into the clock engine.
+
+These ablations show that the operational time direction (v\_glue clock) does not require a spatial cross-link layer, and conversely that a percolating spatial substrate can emerge without a good clock; space and time are distinct, modular mechanisms in this scaffold.
+
+For example, in the glue-off ensemble at W=100, N=8, n=0.8 the clock collapses (\(Q_{\mathrm{clock}}\) median $\approx$ 0.012) while connectivity remains high (\(S_{\mathrm{perc}}\) median $\approx$ 0.983, with $S_{\mathrm{junc}}^{\mathrm{w}}$ median $\approx$ 4.79).
+
+\subsection{Dynamic islands: space stays on while bundles fluctuate}
+Figures~\ref{fig:pilot}--\ref{fig:ensN4} show that ``space stays on while islands fluctuate'' is robust:
+\begin{itemize}
+\item Connectivity (\(S_{\mathrm{perc}}(t)\)) remains high and comparatively stable in the space-on regime.
+\item Intermediate-threshold coherence \(F_{\max}(w_\star=0.20)(t)\) fluctuates substantially in time.
+\item Ensemble median\(\pm\)IQR bands confirm the effect is not a single-trajectory artefact, and differs systematically between \(n=0.4\) and \(n=0.8\).
+\end{itemize}
+
+Quantitatively, in the N=8 ensemble at n=0.8 the time-median of the median connectivity is $S_{\mathrm{perc}}(t)\approx 0.98$ with a typical IQR width $\approx 0.01$, while $F_{\max}(w_\star=0.20)(t)$ has a time-median $\approx 0.50$ with IQR $\approx 0.25$; at n=0.4 the intermediate-threshold coherence remains at its baseline (median 0.125) with negligible spread.
+
+\subsection{Shortcut-rich ``channels + shortcuts'' geometry on the active slice}
+Figures~\ref{fig:ballN8} and \ref{fig:ballN4} show that increasing cross-link pressure from \(n=0.4\) to \(n=0.8\) makes the active graph substantially more shortcut-rich (smaller effective diameter) for both \(N=8\) and \(N=4\). This provides a robust structural signature on the active slice and explains why return-probability spectral-dimension fits are not stable descriptors here.
+
+In the ball-growth ensembles (W=100), the median $r_{50}$ drops from $\approx$26 to $\approx$17 for N=8 and from $\approx$24 to $\approx$8 for N=4 when increasing n from 0.4 to 0.8; at n=0.4 the median curve does not reach 90\% coverage by r$\leq$30, whereas at n=0.8 N=8 reaches $r_{90}\approx 29$ and N=4 reaches $r_{90}\approx 16$.
+
+\section{Discussion}
+\subsection{Layered emergence of space, time, and islands}
+
+\section{Reproducibility}
+
+The reference implementation includes a selftest suite and pipelines that reproduce the reported results. The repo is designed to be rerunnable end-to-end:
+\begin{itemize}
+\item run the selftest: \texttt{bash }\path{bcqm_vi_spacetime/pipelines/run_selftest.sh}
+\item dynamic-islands ensembles: \path{run_timeseries_ensemble_W100.sh} and \path{run_timeseries_ensemble_W100_N4.sh}
+\item ball-growth ensemble: \path{run_ball_growth_ensemble_W100.sh}
+\end{itemize}
+
+\section{Conclusion}
+Stage--1 of BCQM VI establishes a reproducible emergence order (connectivity first, islands later), mechanism separation via ablations, and a dynamic-islands picture. Geometry on the active slice is network-like and n-dependent; ball-growth curves provide a stable descriptor suitable for the next stage, in which a ``cloth'' geometry object beyond the active slice will be defined and tested.
+
+\clearpage
+\appendix
+\section*{Appendix}
+
+\section*{Figures}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{schematic_pathA_vs_nospace.pdf}
+  \caption*{Schematic topology contrast (not to scale). Left: \emph{nospace} yields parallel thread histories with minimal cross-links. Right: \emph{space-on} (Path~A) introduces event reuse and cross-links, creating shortcuts and junctions that drive percolation and overlap-bundle islands.}
+\end{figure}
+
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fig\_timeseries\_islands\_W100\_N8\_n0p8\_seed56796.pdf}
+  \caption{Pilot time series (single seed): connectivity stays high while intermediate-threshold island coherence fluctuates; \(w_\star=0.10\) saturates and \(w_\star=0.30\) remains fragmented, making \(w_\star=0.20\) the informative regime.}
+  \label{fig:pilot}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fig\_3\_space\_vs\_islands\_ensemble\_n0p4\_W100\_N8.pdf}
+  
+  \caption{Dynamic islands (ensemble, \(N=8\)): median\(\pm\)IQR bands show \(S_{\mathrm{perc}}(t)\) persistently high while \(F_{\max}(w_\star=0.20)(t)\) varies in time; behaviour differs systematically between \(n=0.4\) and \(n=0.8\).}
+  \label{fig:ensN8}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fig\_3c\_space\_vs\_islands\_ensemble\_n0p4\_W100\_N4.pdf}
+  
+  \caption{Dynamic islands (ensemble, \(N=4\)): the same ``space stays on, islands fluctuate'' pattern holds across \(N\), supporting robustness beyond a single bundle size.}
+  \label{fig:ensN4}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fig\_4\_ball\_growth\_frac\_ensemble\_W100\_N8.pdf}
+  
+  \caption{Ball-growth geometry (ensemble, \(N=8\)): the active graph tightens substantially from \(n=0.4\) to \(n=0.8\), indicating shortcut-rich connectivity on the active slice.}
+  \label{fig:ballN8}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fig\_4a\_ball\_growth\_frac\_ensemble\_W100\_N4.pdf}
+  
+  \caption{Ball-growth geometry (ensemble, \(N=4\)): the same n-dependent tightening is observed across \(N\), consistent with a robust ``channels + shortcuts'' structural transition.}
+  \label{fig:ballN4}
+\end{figure}
+
+
+\clearpage
+\printbibliography
+\end{document}

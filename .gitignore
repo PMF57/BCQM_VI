@@ -1,17 +1,22 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyd
 .venv/
 venv/
-.env
 
-# macOS
+# macOS + zip artefacts
 .DS_Store
+**/.DS_Store
+__MACOSX/
+**/__MACOSX/
+._*
+**/._*
 
-# Generated outputs (keep local/cloud; not in repo)
-# outputs/
-# outputs_glue_axes/
+# Bulk intermediate artefacts (safe to ignore)
+SNAPSHOT*.csv
+SNAPSHOT*.json
+**/SNAPSHOT*.csv
+**/SNAPSHOT*.json
 
 # Archives
 *.zip

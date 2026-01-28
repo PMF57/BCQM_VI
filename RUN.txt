@@ -1,0 +1,13 @@
+python3 -m bcqm_vi_spacetime.cli run --config configs/quickcheck_full.yml
+
+python3 -m bcqm_vi_spacetime.cli scan --config configs/scan_full_phase1.yml
+
+python3 -m bcqm_vi_spacetime.cli scan --config configs/scan_ablations_phase1.yml
+
+PIPELINE
+
+bash bcqm_vi_spacetime/pipelines/run_ablation_suite_W100.sh
+
+bash bcqm_vi_spacetime/pipelines/run_ablation_suite_W100_glueoff.sh
+
+python3 bcqm_vi_spacetime/analysis/build_fingerprint.py
