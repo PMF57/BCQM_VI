@@ -1,8 +1,18 @@
-# Zenodo
+# Zenodo archive
 
-The compiled BCQM VI paper PDF is archived on Zenodo.
+This repository contains the reference implementation and configuration files for **BCQM VI (Stage-1)**.
 
-- Paper DOI: (fill in)
-- Code DOI (if released separately): (fill in)
+## Links
+- GitHub repository: https://github.com/PMF57/BCQM_VI
+- Zenodo concept DOI (reserved): 10.5281/zenodo.18400713
 
-This repository is the working reference implementation intended to reproduce the paper’s results.
+## Release / reproducibility
+The release tag intended for archival is:
+
+- `v0.1.0`
+
+A Zenodo archive should be created from this tag so that the exact code and configuration state referenced by the paper can be retrieved in perpetuity.
+
+## Notes
+- The compiled paper is archived on Zenodo as a PDF.
+- The repository includes selftests and pipeline scripts to reproduce the reported results.
